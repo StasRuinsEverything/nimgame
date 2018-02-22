@@ -2,7 +2,7 @@ import math
 
 type
   Vec2* = object
-    x, y: float
+    x*, y*: float
 
 proc vec2*(x, y: float): Vec2 = Vec2(x: x, y: y)
 proc `+`*(a, b: Vec2): Vec2 = Vec2(x: a.x + b.x, y: a.y + b.y)

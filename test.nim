@@ -7,6 +7,7 @@ import glutils
 import spritebatch
 import texture
 import textureregion
+import affine2
 
 
 const defaultVert = slurp("simple.vert")

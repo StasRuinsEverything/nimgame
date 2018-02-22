@@ -1,0 +1,13 @@
+{"compile":[
+["c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\affine2.c", "gcc.exe -c  -w -mno-ms-bitfields  -IC:\\nim\\lib -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\affine2.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\affine2.c"],
+["c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.c", "gcc.exe -c  -w -mno-ms-bitfields  -IC:\\nim\\lib -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.c"],
+["c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\vec2.c", "gcc.exe -c  -w -mno-ms-bitfields  -IC:\\nim\\lib -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\vec2.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\vec2.c"]
+],
+"link":[
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\affine2.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_system.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\vec2.o"
+],
+"linkcmd": "gcc.exe   -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\affine2.exe  c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\affine2.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_system.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\vec2.o    "
+}
