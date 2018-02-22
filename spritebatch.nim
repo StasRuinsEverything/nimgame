@@ -2,6 +2,8 @@ import opengl
 import glutils
 import texture
 import textureregion
+import vec2
+import affine2
 
 type
   ProgramLocations* = object
@@ -89,11 +91,18 @@ proc flush*(batch: var SpriteBatch) =
   batch.colorIdx = 0
   batch.texCoordIdx = 0
 
-proc draw*(batch: var SpriteBatch, reg: TextureRegion, x: float, y: float, w: float, h: float) =
-  let (x0, y0) = (float32(x), float32(y))
-  let (x1, y1) = (float32(x + w), float32(y))
-  let (x2, y2) = (float32(x + w), float32(y + h))
-  let (x3, y3) = (float32(x), float32(y + h))
+proc draw*(batch: var SpriteBatch, reg: TextureRegion,
+            x: float, y: float, w: float, h: float,
+            transf: Affine2 = createAffine2()) =
+  let v0 = transf.apply(vec2(x, y))
+  let v1 = transf.apply(vec2(x + w, y))
+  let v2 = transf.apply(vec2(x + w, y + h))
+  let v3 = transf.apply(vec2(x, y + h))
+
+  let (x0, y0) = (float32(v0.x), float32(v0.y))
+  let (x1, y1) = (float32(v1.x), float32(v1.y))
+  let (x2, y2) = (float32(v2.x), float32(v2.y))
+  let (x3, y3) = (float32(v3.x), float32(v3.y))
 
   if reg.texture.handle != batch.lastTexHandle:
     batch.flush()
