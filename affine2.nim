@@ -32,37 +32,41 @@ proc createRot*(rads: float): Affine2 =
     [s, c, 0.0]
   ])
 
-proc product*(l: Affine2, r: Affine2): Affine2 = 
+proc product*(left: Affine2, right: Affine2): Affine2 = 
+  template l: untyped = left.data
+  template r: untyped = right.data
+
   Affine2(data: [
     [
-      l.data[0][0] * r.data[0][0] + l.data[0][1] * r.data[1][0],
-      l.data[0][0] * r.data[0][1] + l.data[0][1] * r.data[1][1],
-      l.data[0][0] * r.data[0][2] + l.data[0][1] * r.data[1][2] + l.data[0][2]
+      l[0][0] * r[0][0] + l[0][1] * r[1][0],
+      l[0][0] * r[0][1] + l[0][1] * r[1][1],
+      l[0][0] * r[0][2] + l[0][1] * r[1][2] + l[0][2]
     ],
     [
-      l.data[1][0] * r.data[0][0] + l.data[1][1] * r.data[1][0],
-      l.data[1][0] * r.data[0][1] + l.data[1][1] * r.data[1][1],
-      l.data[1][0] * r.data[0][2] + l.data[1][1] * r.data[1][2] + l.data[1][2]
+      l[1][0] * r[0][0] + l[1][1] * r[1][0],
+      l[1][0] * r[0][1] + l[1][1] * r[1][1],
+      l[1][0] * r[0][2] + l[1][1] * r[1][2] + l[1][2]
     ]
   ])
 
 proc det*(mat: Affine2): float = 
   return mat.data[0][0] * mat.data[1][1] - mat.data[0][1] * mat.data[1][0]
 
-proc inv*(m: Affine2): Affine2 = 
-  let det = m.det
+proc inv*(mat: Affine2): Affine2 = 
+  let det = mat.det
   let invDet = 1.0 / det
+  template m: untyped = mat.data
 
   Affine2(data: [
     [
-      invDet * m.data[1][1],
-      invDet * -m.data[0][1],
-      invDet * (m.data[0][1] * m.data[1][2] - m.data[1][1] * m.data[0][2])
+      invDet * m[1][1],
+      invDet * -m[0][1],
+      invDet * (m[0][1] * m[1][2] - m[1][1] * m[0][2])
     ],
     [
-      invDet * -m.data[1][0],
-      invDet * m.data[0][0],
-      invDet * (m.data[1][0] * m.data[0][2] - m.data[0][0] * m.data[1][2])
+      invDet * -m[1][0],
+      invDet * m[0][0],
+      invDet * (m[1][0] * m[0][2] - m[0][0] * m[1][2])
     ]
   ])
 
