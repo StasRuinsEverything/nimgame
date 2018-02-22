@@ -1,0 +1,34 @@
+{"compile":[
+["c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\test.c", "gcc.exe -c  -w -mno-ms-bitfields -DWIN32_LEAN_AND_MEAN  -IC:\\nim\\lib -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\test.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\test.c"]
+],
+"link":[
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\test.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_system.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\glfw_glfw3.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\opengl_opengl.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_macros.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_sequtils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_winlean.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_dynlib.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_strutils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_parseutils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_algorithm.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_os.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_times.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_ospaths.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_nimPNG.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_streams.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_endians.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_tables.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_hashes.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_buffer.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_nimz.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_logging.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\glutils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\spritebatch.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\texture.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\textureregion.o"
+],
+"linkcmd": "gcc.exe   -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\test.exe  c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\test.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_system.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\glfw_glfw3.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\opengl_opengl.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_macros.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_sequtils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_winlean.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_dynlib.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_strutils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_parseutils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_math.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_algorithm.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_os.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_times.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_ospaths.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_nimPNG.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_streams.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_endians.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_tables.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_hashes.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_buffer.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\nimPNG_nimz.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\stdlib_logging.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\glutils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\spritebatch.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\texture.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimengine\\nimcache\\textureregion.o    "
+}

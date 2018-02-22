@@ -6,6 +6,7 @@ import logging
 import glutils
 import spritebatch
 import texture
+import textureregion
 
 
 const defaultVert = slurp("simple.vert")
@@ -66,7 +67,8 @@ while glfw.WindowShouldClose(window) == 0:
     glClearColor(1, 0, 0, 1)
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-    batch.draw(tex, -0.5, -0.5, 1, 1)
+    #batch.draw(tex, -0.5, -0.5, 1, 1)
+    batch.draw(makeTextureRegion(tex, 100, 100, tex.width-200, tex.height-200), -0.5, -0.5, 1, 1)
     batch.flush()
 
 glfw.DestroyWindow(window)
