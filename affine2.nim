@@ -68,16 +68,16 @@ proc inv*(m: Affine2): Affine2 =
 
 proc mul*(mat: Affine2, other: Affine2): Affine2 = product(mat, other)
 
-proc trn(mat: Affine2, tx: float, ty: float): Affine2 =
+proc trn*(mat: Affine2, tx: float, ty: float): Affine2 =
   mat.mul(createTrn(tx, ty))
 
-proc scl(mat: Affine2, sx: float, sy: float): Affine2 =
+proc scl*(mat: Affine2, sx: float, sy: float): Affine2 =
   mat.mul(createScl(sx, sy))
 
-proc rot(mat: Affine2, rads: float): Affine2 =
+proc rot*(mat: Affine2, rads: float): Affine2 =
   mat.mul(createRot(rads))
 
-proc apply(m: Affine2, v: Vec2): Vec2 =
+proc apply*(m: Affine2, v: Vec2): Vec2 =
   Vec2(
     x: m.data[0][0] * v.x + m.data[0][1] * v.y + m.data[0][2],
     y: m.data[1][0] * v.x + m.data[1][1] * v.y + m.data[1][2],
