@@ -3,7 +3,7 @@ import vec2
 
 type
   Affine2* = object
-    data: array[2, array[3, float]]
+    data*: array[2, array[3, float]]
 
 proc createAffine2*(): Affine2 =
   Affine2(data: [

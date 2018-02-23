@@ -9,7 +9,7 @@ import texture
 import textureregion
 import affine2
 import math
-
+import mathutils
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
@@ -82,10 +82,20 @@ while glfw.WindowShouldClose(window) == 0:
   #batch.draw(tex, -0.5, -0.5, 1, 1)
 
   #let m = createRot(rot).scl((1 + sin(rot * 4)) / 4 + 0.5, (1 + sin(rot * 4)) / 4 + 0.5).trn(0.2, 0.0)
-  let m = createAffine2().trn(1.0, 0.0).rot(rot)
+  
+  let proj = map(
+    region(0, float winH, float winW, 0),
+    region(-1, -1, 1, 1)
+  )
+  let m = proj #createAffine2().trn(1.0, 0.0).rot(rot).proj
+
+
+  # batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
+  #                               -0.5, -0.5, 1, 1, m)
 
   batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
-                                -0.5, -0.5, 1, 1, m)
+                                100, 100, 110, 120, m)
+
   batch.flush()
 
 glfw.DestroyWindow(window)
