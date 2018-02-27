@@ -35,6 +35,7 @@ type
     
     program: Program
     lastTexHandle: GLuint
+    projection*: Affine2
 
 proc newSpriteBatch*(program: Program): SpriteBatch =
   var batch = SpriteBatch()
@@ -42,6 +43,7 @@ proc newSpriteBatch*(program: Program): SpriteBatch =
   batch.colorBuff = makeVbo(batch.colorData, GL_DYNAMIC_DRAW)
   batch.texCoordBuff = makeVbo(batch.texCoordData, GL_DYNAMIC_DRAW)
   batch.program = program
+  batch.projection = createAffine2()
   return batch
   
 proc pushCoord(batch: var SpriteBatch, x: float32, y: float32) =
@@ -95,10 +97,11 @@ proc flush*(batch: var SpriteBatch) =
 proc draw*(batch: var SpriteBatch, reg: TextureRegion,
             x: float, y: float, w: float, h: float,
             transf: Affine2 = createAffine2()) =
-  let v0 = transf.apply(vec2(x, y))
-  let v1 = transf.apply(vec2(x + w, y))
-  let v2 = transf.apply(vec2(x + w, y + h))
-  let v3 = transf.apply(vec2(x, y + h))
+  let m = batch.projection.trn(x, y).mul(transf)
+  let v0 = m.apply(vec2(0, 0))
+  let v1 = m.apply(vec2(w, 0))
+  let v2 = m.apply(vec2(w, h))
+  let v3 = m.apply(vec2(0, h))
 
   let (x0, y0) = (float32(v0.x), float32(v0.y))
   let (x1, y1) = (float32(v1.x), float32(v1.y))

@@ -61,10 +61,16 @@ proc textureLoader(path: string): Texture =
   let png = loadPNG32("data/" & path)
   createTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
-let atlas = loadAtlas("data/sprites.atlas", textureLoader)
+#let atlas = loadAtlas("data/sprites.atlas", textureLoader)
 
 
 let tex = textureLoader("logo.png")
+
+#let tex1 = textureLoader("sprites.png")
+#let tex2 = textureLoader("sprites2.png")
+#let tex3 = textureLoader("sprites3.png")
+#let tex4 = textureLoader("sprites4.png")
+#let tex5 = textureLoader("sprites5.png")
 
 var batch = newSpriteBatch(program)
 var rot = 0.0
@@ -110,16 +116,18 @@ while glfw.WindowShouldClose(window) == 0:
     region(-1, -1, 1, 1)
   )
 
+  batch.projection = proj
+  #let m = proj.trn(winW / 2, winH / 2).rot(rot)
+  let m = createRot(rot).trn(-100, -100)
 
-  let m = proj.trn(winW / 2, winH / 2).rot(rot)
-
-
-  # batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
+  #batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
 
-  #batch.draw(makeTextureRegion(atlas.dir.cyan.tex, 0, 0, atlas.pages[0].width, atlas.pages[0].height),
-  #                              -100, -100, 200, 200, m)
-  batch.draw(atlas.dir.char.char_running[int(frame) mod atlas.dir.char.char_running.len], -100, -100, 200, 200, m)
+  batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height),
+                                winW / 2, winH / 2, 200, 200, m)
+  
+  #let anim = atlas.dir.char.char_jump
+  #batch.draw(anim[int(frame) mod anim.len], -100, -100, 200, 200, m)
 
   #batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
   batch.flush()
