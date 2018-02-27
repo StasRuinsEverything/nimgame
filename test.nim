@@ -10,6 +10,7 @@ import textureregion
 import affine2
 import math
 import mathutils
+import vec2
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
@@ -53,7 +54,7 @@ let program = Program(
   locations: getStandardLocations(handle)
 )
 
-let png = loadPNG32("logo.png")
+let png = loadPNG32("data/logo.png")
 let tex = createTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 echo png.width, png.height
 
@@ -69,6 +70,8 @@ while glfw.WindowShouldClose(window) == 0:
 
   rot += 0.01
   
+  #let tmp = vec2(0, 0)
+  #tmp.
 
   var winW, winH: cint
   glfw.GetFramebufferSize(window, addr winW, addr winH)
@@ -87,14 +90,16 @@ while glfw.WindowShouldClose(window) == 0:
     region(0, float winH, float winW, 0),
     region(-1, -1, 1, 1)
   )
-  let m = proj #createAffine2().trn(1.0, 0.0).rot(rot).proj
+
+
+  let m = proj.trn(winW / 2, winH / 2).rot(rot)
 
 
   # batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
 
   batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
-                                100, 100, 110, 120, m)
+                                -100, -100, 200, 200, m)
 
   batch.flush()
 
