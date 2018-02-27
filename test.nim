@@ -70,10 +70,12 @@ var batch = newSpriteBatch(program)
 var rot = 0.0
 
 
-echo atlas.dir.cyan.u0 * float atlas.pages[0].width
-echo atlas.dir.cyan.v0 * float atlas.pages[0].height
-echo atlas.dir.cyan.u1 * float atlas.pages[0].width
-echo atlas.dir.cyan.v1 * float atlas.pages[0].height
+#echo atlas.dir.cyan.u0 * float atlas.pages[0].width
+#echo atlas.dir.cyan.v0 * float atlas.pages[0].height
+#echo atlas.dir.cyan.u1 * float atlas.pages[0].width
+#echo atlas.dir.cyan.v1 * float atlas.pages[0].height
+
+var frame = 0.0
 
 while glfw.WindowShouldClose(window) == 0:
   glfw.PollEvents()
@@ -83,6 +85,7 @@ while glfw.WindowShouldClose(window) == 0:
       glfw.SetWindowShouldClose(window,1)
 
   rot += 0.01
+  frame += 0.2
   
   #let tmp = vec2(0, 0)
   #tmp.
@@ -93,6 +96,8 @@ while glfw.WindowShouldClose(window) == 0:
   glClearColor(1, 0, 0, 1)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
   glViewport(0, 0, winW, winH)
+  glEnable(GL_BLEND)
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
 
@@ -114,8 +119,9 @@ while glfw.WindowShouldClose(window) == 0:
 
   #batch.draw(makeTextureRegion(atlas.dir.cyan.tex, 0, 0, atlas.pages[0].width, atlas.pages[0].height),
   #                              -100, -100, 200, 200, m)
-  
-  batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
+  batch.draw(atlas.dir.char.char_running[int(frame) mod atlas.dir.char.char_running.len], -100, -100, 200, 200, m)
+
+  #batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
   batch.flush()
 
 glfw.DestroyWindow(window)
