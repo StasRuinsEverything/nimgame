@@ -4,6 +4,7 @@ import texture
 import textureregion
 import vec2
 import affine2
+import spriteatlas
 
 type
   ProgramLocations* = object
@@ -108,6 +109,48 @@ proc draw*(batch: var SpriteBatch, reg: TextureRegion,
     batch.flush()
     batch.lastTexHandle = reg.texture.handle
     glBindTexture(GL_TEXTURE_2D, reg.texture.handle) 
+
+  batch.pushCoord(x0, y0)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u0, reg.v0)
+
+  batch.pushCoord(x1, y1)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u1, reg.v0)
+
+  batch.pushCoord(x2, y2)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u1, reg.v1)
+
+  batch.pushCoord(x2, y2)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u1, reg.v1)
+
+  batch.pushCoord(x3, y3)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u0, reg.v1)
+
+  batch.pushCoord(x0, y0)
+  batch.pushColor(255, 255, 255, 255)
+  batch.pushTexCoord(reg.u0, reg.v0)
+
+proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
+            x: float, y: float, w: float, h: float,
+            transf: Affine2 = createAffine2()) =
+  let v0 = transf.apply(vec2(x, y))
+  let v1 = transf.apply(vec2(x + w, y))
+  let v2 = transf.apply(vec2(x + w, y + h))
+  let v3 = transf.apply(vec2(x, y + h))
+
+  let (x0, y0) = (float32(v0.x), float32(v0.y))
+  let (x1, y1) = (float32(v1.x), float32(v1.y))
+  let (x2, y2) = (float32(v2.x), float32(v2.y))
+  let (x3, y3) = (float32(v3.x), float32(v3.y))
+
+  if reg.tex.handle != batch.lastTexHandle:
+    batch.flush()
+    batch.lastTexHandle = reg.tex.handle
+    glBindTexture(GL_TEXTURE_2D, reg.tex.handle) 
 
   batch.pushCoord(x0, y0)
   batch.pushColor(255, 255, 255, 255)

@@ -4,22 +4,7 @@ import macros
 import strutils
 import sequtils
 import algorithm
-
-const file = """
-
-sprites.png
-size: 1024,1024
-format: RGBA8888
-filter: Linear,Linear
-repeat: none
-char/slide_down
-  rotate: false
-  xy: 730, 810
-  size: 204, 116
-  orig: 204, 116
-  offset: 0, 0
-  index: -1
-"""
+import texture
 
 #=============== Crappy string stream implementation (Nim's doesn't work at compile time) =======
 
@@ -82,20 +67,20 @@ type
     xoffs, yoffs: int
     index: int
   
-  AtlasPage = object
+  AtlasPage* = object
     width*, height*: int
     path*: string
   
-  SpriteAtlas = object
+  SpriteAtlas* = object
     pages: seq[AtlasPage]
     dir: Dir
   
-  AtlasRegion = object
-    u0, v0, u1, v1: float
-    logicalWidth, logicalHeight: int
-    xoffs, yoffs: int
-    tex: string
-    page: int
+  AtlasRegion* = object
+    u0*, v0*, u1*, v1*: float
+    logicalWidth*, logicalHeight*: int
+    xoffs*, yoffs*: int
+    tex*: Texture
+    page*: int
   
   Dir = Table[string, Entry]
   
@@ -249,11 +234,12 @@ proc genRegVal(reg: AtlasRegion, pagesSym: NimNode): NimNode {.compileTime.} =
                             add(pagesSym).
                             add(newIntLitNode(reg.page))))
 
-proc genPagesVal(pages: openArray[AtlasPage]): NimNode {.compileTime.} =
+proc genPagesVal(pages: openArray[AtlasPage], loader: NimNode): NimNode {.compileTime.} =
   result = newNimNode(nnkBracket)
+  echo treeRepr loader
   
   for page in pages.items:
-    result.add(newStrLitNode(page.path))
+    result.add(newNimNode(nnkCall).add(loader).add(newStrLitNode(page.path)))
 
 proc genEntryVal(entry: Entry, pagesSym: NimNode): NimNode {.compileTime.} =
   if entry.leaf:
@@ -271,29 +257,35 @@ proc genEntryVal(entry: Entry, pagesSym: NimNode): NimNode {.compileTime.} =
 
 #================================================
 
-macro loadAtlas(file: string): untyped = 
-  var stream = initCtsStream(file.symbol.getImpl.strVal)
+macro loadAtlas*(file: string, loader: proc(path: string): Texture): untyped =
+  var stream = initCtsStream(slurp($file))
   var atlas: SpriteAtlas
 
-  echo file.symbol.getImpl.strVal
+  #echo file.symbol.getImpl.strVal
 
   parseAtlas(stream, atlas)
   
   let pagesSym = genSym(nskLet, "pages")
   let dirType = genDirType(atlas.dir)
   let dirVal = genDirVal(atlas.dir, pagesSym)
-  let pagesType = genArrayType(atlas.pages.len, bindSym("string"))
-  let pagesVal = genPagesVal(atlas.pages)
+  let pagesType = genArrayType(atlas.pages.len, bindSym("Texture"))
+  let pagesVal = genPagesVal(atlas.pages, loader)
   
   let x = quote do:
     (proc(): tuple[pages: `pagesType`, dir: `dirType`] = 
       let `pagesSym` = `pagesVal`
       (pages: `pagesSym`, dir: `dirVal`))()
   
-  echo x.repr
+  #echo x.repr
   x
 
-# var stream = initCtsStream(file)
+#proc crap(path: string): Texture =
+#  Texture()
+
+#var x = loadAtlas("data/sprites.atlas", crap)
+#echo x
+
+#var stream = initCtsStream(file)
 # var atlas: SpriteAtlas
 # parseAtlas(stream, atlas)
 # echo atlas

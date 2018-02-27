@@ -1,13 +1,181 @@
 
 sprites.png
-size: 1024,1024
+size: 512,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-char/slide_down
+black
   rotate: false
-  xy: 730, 810
-  size: 204, 116
-  orig: 204, 116
+  xy: 132, 128
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+black_bright
+  rotate: false
+  xy: 264, 195
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+block_frame
+  rotate: false
+  xy: 322, 195
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+block_ghost
+  rotate: false
+  xy: 322, 195
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+block_glow
+  rotate: false
+  xy: 2, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 41
+block_glow
+  rotate: false
+  xy: 2, 2
+  size: 118, 119
+  orig: 118, 119
+  offset: 0, 0
+  index: -1
+blockbg
+  rotate: false
+  xy: 132, 186
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+blue
+  rotate: false
+  xy: 380, 195
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+blue_bright
+  rotate: false
+  xy: 438, 195
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+circle
+  rotate: false
+  xy: 296, 49
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+circle - Copy
+  rotate: false
+  xy: 296, 49
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+cyan
+  rotate: false
+  xy: 122, 65
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+cyan_bright
+  rotate: false
+  xy: 122, 7
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+green
+  rotate: false
+  xy: 190, 128
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+green_bright
+  rotate: false
+  xy: 180, 70
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+magenta
+  rotate: false
+  xy: 180, 12
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+magenta_bright
+  rotate: false
+  xy: 248, 129
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+orange
+  rotate: false
+  xy: 306, 137
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+orange_bright
+  rotate: false
+  xy: 364, 137
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+particle
+  rotate: false
+  xy: 198, 187
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+particle2
+  rotate: false
+  xy: 296, 31
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+pink
+  rotate: false
+  xy: 422, 137
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+pink_bright
+  rotate: false
+  xy: 238, 70
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+red
+  rotate: false
+  xy: 238, 12
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+red_bright
+  rotate: false
+  xy: 296, 71
+  size: 56, 56
+  orig: 56, 56
   offset: 0, 0
   index: -1
