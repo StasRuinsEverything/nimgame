@@ -153,18 +153,17 @@ proc draw*(batch: var SpriteBatch, reg: TextureRegion,
 
 
 
-
-
-
-
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
-            x: float, y: float, w: float, h: float,
-            transf: Affine2 = createAffine2()) =
-  let m = batch.projection.trn(x, y).mul(transf)
-  let v0 = m.apply(vec2(0, 0))
-  let v1 = m.apply(vec2(w, 0))
-  let v2 = m.apply(vec2(w, h))
-  let v3 = m.apply(vec2(0, h))
+            x, y, w, h: float, transf: Affine2 = createAffine2()) =
+  let m = batch.projection.
+    trn(x, y).
+    mul(transf).
+    scl(w / float reg.logicalWidth, h / float reg.logicalHeight)
+
+  let v0 = m.apply(vec2(float reg.xoffs, float reg.yoffs))
+  let v1 = m.apply(vec2(float reg.xoffs + reg.width, float reg.yoffs))
+  let v2 = m.apply(vec2(float reg.xoffs + reg.width, float reg.yoffs + reg.height))
+  let v3 = m.apply(vec2(float reg.xoffs, float reg.yoffs + reg.height))
 
   let (x0, y0) = (float32(v0.x), float32(v0.y))
   let (x1, y1) = (float32(v1.x), float32(v1.y))
@@ -199,6 +198,10 @@ proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
   batch.pushCoord(x0, y0)
   batch.pushColor(255, 255, 255, 255)
   batch.pushTexCoord(reg.u0, reg.v0)
+
+
+
+
 
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
             x: float, y: float, transf: Affine2 = createAffine2()) =

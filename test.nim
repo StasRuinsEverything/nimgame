@@ -108,7 +108,7 @@ while glfw.WindowShouldClose(window) == 0:
       glfw.SetWindowShouldClose(window,1)
 
   rot += 0.01
-  frame += 0.05
+  frame += 0.25
   
   #let tmp = vec2(0, 0)
   #tmp.
@@ -141,7 +141,7 @@ while glfw.WindowShouldClose(window) == 0:
   #                               -0.5, -0.5, 1, 1, m)
 
   batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height),
-                                winW / 2, winH / 2, 200, 200, m)
+                                winW / 2, winH / 2, 300, 200, m)
   
 
   #batch.draw(atlas.dir.skull, winW / 2, winH / 2, 200, 200, m)
@@ -149,7 +149,7 @@ while glfw.WindowShouldClose(window) == 0:
   let anim = atlas.dir.rot
   let fn = int(frame) mod anim.len
 
-  batch.draw(anim[fn], winW / 2, winH / 2, m)
+  batch.draw(anim[fn], winW / 2, winH / 2, 300, 200, m)
   #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
 
 
