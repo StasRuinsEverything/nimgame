@@ -135,7 +135,7 @@ while glfw.WindowShouldClose(window) == 0:
 
   batch.projection = proj
   #let m = proj.trn(winW / 2, winH / 2).rot(rot)
-  let m = createRot(0).trn(0, 0)
+  let m = createRot(rot).trn(-150, -100)
 
   #batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
@@ -149,7 +149,7 @@ while glfw.WindowShouldClose(window) == 0:
   let anim = atlas.dir.rot
   let fn = int(frame) mod anim.len
 
-  batch.draw(anim[fn], winW / 2, winH / 2, 300, 200, m)
+  batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
   #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
 
 

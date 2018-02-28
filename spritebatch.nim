@@ -137,22 +137,6 @@ proc draw*(batch: var SpriteBatch, reg: TextureRegion,
   batch.pushColor(255, 255, 255, 255)
   batch.pushTexCoord(reg.u0, reg.v0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
             x, y, w, h: float, transf: Affine2 = createAffine2()) =
   let m = batch.projection.
@@ -200,64 +184,24 @@ proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
   batch.pushTexCoord(reg.u0, reg.v0)
 
 
-
+# ------------ Simplified overloads ----------------
 
 
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
-            x: float, y: float, transf: Affine2 = createAffine2()) =
-  let m = batch.projection.trn(x, y).mul(transf)
-  let v0 = m.apply(vec2(float reg.xoffs, float reg.yoffs))
-  let v1 = m.apply(vec2(float reg.xoffs + reg.width, float reg.yoffs))
-  let v2 = m.apply(vec2(float reg.xoffs + reg.width, float reg.yoffs + reg.height))
-  let v3 = m.apply(vec2(float reg.xoffs, float reg.yoffs + reg.height))
+            x, y: float, transf: Affine2 = createAffine2()) =
+  batch.draw(reg, x, y, float reg.logicalWidth, float reg.logicalHeight, transf)
 
-  let (x0, y0) = (float32(v0.x), float32(v0.y))
-  let (x1, y1) = (float32(v1.x), float32(v1.y))
-  let (x2, y2) = (float32(v2.x), float32(v2.y))
-  let (x3, y3) = (float32(v3.x), float32(v3.y))
+proc drawWithWidth*(batch: var SpriteBatch, reg: AtlasRegion,
+                    x, y, width: float, transf: Affine2 = createAffine2()) =
+  batch.draw(reg, x, y, width, float(reg.logicalHeight) * width / float(reg.logicalWidth), transf)
 
-  if reg.tex.handle != batch.lastTexHandle:
-    batch.flush()
-    batch.lastTexHandle = reg.tex.handle
-    glBindTexture(GL_TEXTURE_2D, reg.tex.handle) 
-
-  batch.pushCoord(x0, y0)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u0, reg.v0)
-
-  batch.pushCoord(x1, y1)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u1, reg.v0)
-
-  batch.pushCoord(x2, y2)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u1, reg.v1)
-
-  batch.pushCoord(x2, y2)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u1, reg.v1)
-
-  batch.pushCoord(x3, y3)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u0, reg.v1)
-
-  batch.pushCoord(x0, y0)
-  batch.pushColor(255, 255, 255, 255)
-  batch.pushTexCoord(reg.u0, reg.v0)
-
-
-
-
-
-
-
-
-
-
-
+proc drawWithHeight*(batch: var SpriteBatch, reg: AtlasRegion,
+                      x, y, height: float, transf: Affine2 = createAffine2()) =
+  batch.draw(reg, x, y, float(reg.logicalWidth) * height / float(reg.logicalHeight), height, transf)
 
 proc draw*(batch: var SpriteBatch, tex: Texture, x: float, y: float, width: float, height: float) =
   batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height), x, y, width, height)
+
 
 #proc draw*(batch: var SpriteBatch, tex: Texture, x: float, y: float) =
 #  batch.draw(tex, x, y, float tex.width, float tex.height)
