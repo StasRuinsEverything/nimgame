@@ -55,13 +55,29 @@ let program = Program(
   locations: getStandardLocations(handle)
 )
 
+proc `[]`(png: PNGResult, x, y: int): tuple[r: char, g: char, b: char, a: char] =
+ let i = (y * png.width + x) * 4
+ (png.data[i + 0], png.data[i + 1], png.data[i + 2], png.data[i + 3])
 
+proc `[]=`(png: PNGResult, x, y: int, color: tuple[r: char, g: char, b: char, a: char]) =
+  let i = (y * png.width + x) * 4
+  png.data[i + 0] = color.r
+  png.data[i + 1] = color.g
+  png.data[i + 2] = color.b
+  png.data[i + 3] = color.a
 
 proc textureLoader(path: string): Texture =
   let png = loadPNG32("data/" & path)
+
+  for y in 0 ..< png.height div 2:
+    for x in 0 ..< png.width:
+      let tmp = png[x, png.height - 1 - y]
+      png[x, png.height - 1 - y] = png[x, y]
+      png[x, y] = tmp
+
   createTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
-#let atlas = loadAtlas("data/sprites.atlas", textureLoader)
+let atlas = loadAtlas("data/sprites.atlas", textureLoader)
 
 
 let tex = textureLoader("logo.png")
@@ -82,6 +98,7 @@ var rot = 0.0
 #echo atlas.dir.cyan.v1 * float atlas.pages[0].height
 
 var frame = 0.0
+echo atlas
 
 while glfw.WindowShouldClose(window) == 0:
   glfw.PollEvents()
@@ -91,7 +108,7 @@ while glfw.WindowShouldClose(window) == 0:
       glfw.SetWindowShouldClose(window,1)
 
   rot += 0.01
-  frame += 0.2
+  frame += 0.05
   
   #let tmp = vec2(0, 0)
   #tmp.
@@ -99,7 +116,7 @@ while glfw.WindowShouldClose(window) == 0:
   var winW, winH: cint
   glfw.GetFramebufferSize(window, addr winW, addr winH)
 
-  glClearColor(1, 0, 0, 1)
+  glClearColor(0, 0, 0, 1)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
   glViewport(0, 0, winW, winH)
   glEnable(GL_BLEND)
@@ -118,7 +135,7 @@ while glfw.WindowShouldClose(window) == 0:
 
   batch.projection = proj
   #let m = proj.trn(winW / 2, winH / 2).rot(rot)
-  let m = createRot(rot).trn(-100, -100)
+  let m = createRot(0).trn(0, 0)
 
   #batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
@@ -126,8 +143,16 @@ while glfw.WindowShouldClose(window) == 0:
   batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height),
                                 winW / 2, winH / 2, 200, 200, m)
   
-  #let anim = atlas.dir.char.char_jump
-  #batch.draw(anim[int(frame) mod anim.len], -100, -100, 200, 200, m)
+
+  #batch.draw(atlas.dir.skull, winW / 2, winH / 2, 200, 200, m)
+
+  let anim = atlas.dir.rot
+  let fn = int(frame) mod anim.len
+
+  batch.draw(anim[fn], winW / 2, winH / 2, m)
+  #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
+
+
 
   #batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
   batch.flush()

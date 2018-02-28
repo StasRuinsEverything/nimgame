@@ -77,6 +77,7 @@ type
   
   AtlasRegion* = object
     u0*, v0*, u1*, v1*: float
+    width*, height*: int
     logicalWidth*, logicalHeight*: int
     xoffs*, yoffs*: int
     tex*: Texture
@@ -140,13 +141,15 @@ proc parseAtlas(stream: var CtsStream, atlas: var SpriteAtlas) =
 
       atlas.dir.insertReg(AtlasRegion(
         u0: desc.x / page.width,
-        v0: desc.y / page.height,
+        v0: 1 - desc.y / page.height,
         u1: (desc.x + desc.width) / page.width,
-        v1: (desc.y + desc.height) / page.height,
+        v1: 1 - (desc.y + desc.height) / page.height,
         logicalWidth: desc.logicalWidth,
         logicalHeight: desc.logicalHeight,
+        width: desc.width,
+        height: desc.height,
         xoffs: desc.xoffs,
-        yoffs: desc.yoffs,
+        yoffs: desc.logicalHeight - desc.yoffs - desc.height,
         page: atlas.pages.len
       ), desc.index, desc.name.split("/"), 0)
     
@@ -226,6 +229,8 @@ proc genRegVal(reg: AtlasRegion, pagesSym: NimNode): NimNode {.compileTime.} =
     add(genFieldDef("v1", newFloatLitNode(reg.v1))).
     add(genFieldDef("logicalWidth", newIntLitNode(reg.logicalWidth))).
     add(genFieldDef("logicalHeight", newIntLitNode(reg.logicalHeight))).
+    add(genFieldDef("width", newIntLitNode(reg.width))).
+    add(genFieldDef("height", newIntLitNode(reg.height))).
     add(genFieldDef("xoffs", newIntLitNode(reg.xoffs))).
     add(genFieldDef("yoffs", newIntLitNode(reg.yoffs))).
     add(genFieldDef("page", newIntLitNode(reg.page))).

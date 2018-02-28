@@ -9,7 +9,7 @@ proc makeTextureRegion*(tex: Texture, x: int, y: int, width: int, height: int): 
   TextureRegion(
     texture: tex,
     u0: x / tex.width,
-    v0: y / tex.height,
+    v0: 1 - y / tex.height,
     u1: (x + width) / tex.width,
-    v1: (y + height) / tex.height
+    v1: 1 - (y + height) / tex.height
   )
