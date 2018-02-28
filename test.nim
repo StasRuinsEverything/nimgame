@@ -11,7 +11,7 @@ import affine2
 import math
 import mathutils
 import vec2
-import spriteatlas
+import spriteatlasloader
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
