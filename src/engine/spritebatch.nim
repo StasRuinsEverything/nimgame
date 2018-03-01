@@ -200,7 +200,7 @@ proc drawWithHeight*(batch: var SpriteBatch, reg: AtlasRegion,
   batch.draw(reg, x, y, float(reg.logicalWidth) * height / float(reg.logicalHeight), height, transf)
 
 proc draw*(batch: var SpriteBatch, tex: Texture, x: float, y: float, width: float, height: float) =
-  batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height), x, y, width, height)
+  batch.draw(initTextureRegion(tex, 0, 0, tex.width, tex.height), x, y, width, height)
 
 
 #proc draw*(batch: var SpriteBatch, tex: Texture, x: float, y: float) =

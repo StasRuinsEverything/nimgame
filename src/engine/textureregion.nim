@@ -5,7 +5,7 @@ type
     texture*: Texture
     u0*, v0*, u1*, v1*: float
 
-proc makeTextureRegion*(tex: Texture, x: int, y: int, width: int, height: int): TextureRegion =
+proc initTextureRegion*(tex: Texture, x: int, y: int, width: int, height: int): TextureRegion =
   TextureRegion(
     texture: tex,
     u0: x / tex.width,

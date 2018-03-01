@@ -130,10 +130,10 @@ while glfw.WindowShouldClose(window) == 0:
   #let m = proj.trn(winW / 2, winH / 2).rot(rot)
   let m = initRot(rot).trn(-150, -100)
 
-  #batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
+  #batch.draw(initTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
 
-  batch.draw(makeTextureRegion(tex, 0, 0, tex.width, tex.height),
+  batch.draw(initTextureRegion(tex, 0, 0, tex.width, tex.height),
                                 winW / 2, winH / 2, 300, 200, m)
   
 
