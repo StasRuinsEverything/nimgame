@@ -2,16 +2,9 @@ import glfw3 as glfw
 import opengl
 import nimPNG
 import logging
-
-import glutils
-import spritebatch
-import texture
-import textureregion
-import affine2
 import math
-import mathutils
-import vec2
-import spriteatlasloader
+
+import engine/[glutils, spritebatch, texture, textureregion, affine2, mathutils, vec2, spriteatlasloader]
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
@@ -77,7 +70,7 @@ proc textureLoader(path: string): Texture =
 
   initTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
-let atlas = loadAtlas("data/sprites.atlas", textureLoader)
+let atlas = loadAtlas("../../data/sprites.atlas", textureLoader)
 
 
 let tex = textureLoader("logo.png")
