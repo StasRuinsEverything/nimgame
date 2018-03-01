@@ -1,0 +1,22 @@
+{"compile":[
+["c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\tilemap.c", "gcc.exe -c  -w -mno-ms-bitfields  -IC:\\nim\\lib -o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\tilemap.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\tilemap.c"]
+],
+"link":[
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\tilemap.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_system.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_json.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_hashes.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_tables.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_strutils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_lexbase.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_streams.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_unicode.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_macros.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_parseutils.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_math.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_algorithm.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_options.o",
+"c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_typetraits.o"
+],
+"linkcmd": "gcc.exe   -o C:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\bin\\tilemap  c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\tilemap.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_system.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_json.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_hashes.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_tables.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_strutils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_lexbase.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_streams.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_unicode.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_macros.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_parseutils.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_math.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_algorithm.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_options.o c:\\Users\\Desktop-P1NKA\\Desktop\\nimgame\\src\\tilemap\\nimcache\\stdlib_typetraits.o    "
+}

@@ -4,7 +4,16 @@ import nimPNG
 import logging
 import math
 
-import engine/[glutils, spritebatch, texture, textureregion, affine2, mathutils, vec2, spriteatlasloader]
+import
+  engine/glutils,
+  engine/spritebatch,
+  engine/texture,
+  engine/textureregion,
+  engine/affine2,
+  engine/mathutils,
+  engine/vec2,
+  engine/spriteatlasloader,
+  tilemap/tilemap
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
@@ -71,7 +80,7 @@ proc textureLoader(path: string): Texture =
   initTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
 let atlas = loadAtlas("../../data/sprites.atlas", textureLoader)
-
+let map = readTilemap("data/level1.json", textureLoader)
 
 let tex = textureLoader("logo.png")
 
@@ -91,7 +100,7 @@ var rot = 0.0
 #echo atlas.dir.cyan.v1 * float atlas.pages[0].height
 
 var frame = 0.0
-echo atlas
+#echo atlas
 
 while glfw.WindowShouldClose(window) == 0:
   glfw.PollEvents()
@@ -142,6 +151,16 @@ while glfw.WindowShouldClose(window) == 0:
   let anim = atlas.dir.rot
   let fn = int(frame) mod anim.len
 
+  #batch.draw(map.regs[30], 10, 10, 100, 100)
+  
+  for layer in map.layers:
+    for row in 0 ..< layer.height:
+      for col in 0 ..< layer.width:
+        let gid = layer[row, col]
+        if gid != 0:
+          batch.draw(map.regs[gid], float col * 32, float row * 32, 32, 32)
+
+  
   batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
   #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
 
