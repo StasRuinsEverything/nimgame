@@ -39,11 +39,11 @@ type
 
 proc newSpriteBatch*(program: Program): SpriteBatch =
   var batch = SpriteBatch()
-  batch.coordBuff = makeVbo(batch.coordData, GL_DYNAMIC_DRAW)
-  batch.colorBuff = makeVbo(batch.colorData, GL_DYNAMIC_DRAW)
-  batch.texCoordBuff = makeVbo(batch.texCoordData, GL_DYNAMIC_DRAW)
+  batch.coordBuff = createVbo(batch.coordData, GL_DYNAMIC_DRAW)
+  batch.colorBuff = createVbo(batch.colorData, GL_DYNAMIC_DRAW)
+  batch.texCoordBuff = createVbo(batch.texCoordData, GL_DYNAMIC_DRAW)
   batch.program = program
-  batch.projection = createAffine2()
+  batch.projection = initAffine2()
   return batch
   
 proc pushCoord(batch: var SpriteBatch, x: float32, y: float32) =
@@ -96,7 +96,7 @@ proc flush*(batch: var SpriteBatch) =
 
 proc draw*(batch: var SpriteBatch, reg: TextureRegion,
             x: float, y: float, w: float, h: float,
-            transf: Affine2 = createAffine2()) =
+            transf: Affine2 = initAffine2()) =
   let m = batch.projection.trn(x, y).mul(transf)
   let v0 = m.apply(vec2(0, 0))
   let v1 = m.apply(vec2(w, 0))
@@ -138,7 +138,7 @@ proc draw*(batch: var SpriteBatch, reg: TextureRegion,
   batch.pushTexCoord(reg.u0, reg.v0)
 
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
-            x, y, w, h: float, transf: Affine2 = createAffine2()) =
+            x, y, w, h: float, transf: Affine2 = initAffine2()) =
   let m = batch.projection.
     trn(x, y).
     mul(transf).
@@ -188,15 +188,15 @@ proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
 
 
 proc draw*(batch: var SpriteBatch, reg: AtlasRegion,
-            x, y: float, transf: Affine2 = createAffine2()) =
+            x, y: float, transf: Affine2 = initAffine2()) =
   batch.draw(reg, x, y, float reg.logicalWidth, float reg.logicalHeight, transf)
 
 proc drawWithWidth*(batch: var SpriteBatch, reg: AtlasRegion,
-                    x, y, width: float, transf: Affine2 = createAffine2()) =
+                    x, y, width: float, transf: Affine2 = initAffine2()) =
   batch.draw(reg, x, y, width, float(reg.logicalHeight) * width / float(reg.logicalWidth), transf)
 
 proc drawWithHeight*(batch: var SpriteBatch, reg: AtlasRegion,
-                      x, y, height: float, transf: Affine2 = createAffine2()) =
+                      x, y, height: float, transf: Affine2 = initAffine2()) =
   batch.draw(reg, x, y, float(reg.logicalWidth) * height / float(reg.logicalHeight), height, transf)
 
 proc draw*(batch: var SpriteBatch, tex: Texture, x: float, y: float, width: float, height: float) =

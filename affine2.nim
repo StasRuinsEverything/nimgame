@@ -5,25 +5,25 @@ type
   Affine2* = object
     data*: array[2, array[3, float]]
 
-proc createAffine2*(): Affine2 =
+proc initAffine2*(): Affine2 =
   Affine2(data: [
     [1.0, 0.0, 0.0],
     [0.0, 1.0, 0.0]
   ])
 
-proc createTrn*(tx: float, ty: float): Affine2 =
+proc initTrn*(tx: float, ty: float): Affine2 =
   Affine2(data: [
     [1.0, 0.0, tx],
     [0.0, 1.0, ty]
   ])
 
-proc createScl*(sx: float, sy: float): Affine2 = 
+proc initScl*(sx: float, sy: float): Affine2 = 
   Affine2(data: [
     [sx, 0.0, 0.0],
     [0.0, sy, 0.0]
   ])
 
-proc createRot*(rads: float): Affine2 = 
+proc initRot*(rads: float): Affine2 = 
   let c = cos(rads)
   let s = sin(rads)
 
@@ -73,13 +73,13 @@ proc inv*(mat: Affine2): Affine2 =
 proc mul*(mat: Affine2, other: Affine2): Affine2 = product(mat, other)
 
 proc trn*(mat: Affine2, tx: float, ty: float): Affine2 =
-  mat.mul(createTrn(tx, ty))
+  mat.mul(initTrn(tx, ty))
 
 proc scl*(mat: Affine2, sx: float, sy: float): Affine2 =
-  mat.mul(createScl(sx, sy))
+  mat.mul(initScl(sx, sy))
 
 proc rot*(mat: Affine2, rads: float): Affine2 =
-  mat.mul(createRot(rads))
+  mat.mul(initRot(rads))
 
 proc apply*(m: Affine2, v: Vec2): Vec2 =
   Vec2(

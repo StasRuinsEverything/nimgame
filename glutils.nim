@@ -23,7 +23,7 @@ proc logErrors*() =
   for err in errors():
     logging.warn("OpenGL error: ", errorString(err))
 
-proc makeVbo*[T](data: openarray[T], usage: GLenum): GLuint =
+proc createVbo*[T](data: openarray[T], usage: GLenum): GLuint =
   var buff: GLuint
   glGenBuffers(1, addr(buff))
   glBindBuffer(GL_ARRAY_BUFFER, buff)
@@ -43,7 +43,7 @@ proc createShader*(shaderType: GLenum, source: string): GLuint =
   assert(status == GLint(GL_TRUE))
   return shader
   
-proc createProgram*(vertexShader: GLuint, fragmentShader: GLuint): GLuint =
+proc initProgram*(vertexShader: GLuint, fragmentShader: GLuint): GLuint =
   let program = glCreateProgram()
   var status: GLint
   

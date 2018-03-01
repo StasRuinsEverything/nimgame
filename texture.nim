@@ -9,7 +9,7 @@ type
       height*: int
       handle*: GLuint
 
-proc createTexture*(width: int, height: int, format: PixelFormat, data: var string): Texture =
+proc initTexture*(width: int, height: int, format: PixelFormat, data: var string): Texture =
   let glFormat = case format
     of RGB: GL_RGB
     of RGBA: GL_RGBA

@@ -45,7 +45,7 @@ proc getStandardLocations(program: GLuint): ProgramLocations =
     texture: glGetUniformLocation(program, "u_texture")
   )
 
-let handle = createProgram(
+let handle = initProgram(
   createShader(GL_VERTEX_SHADER, defaultVert),
   createShader(GL_FRAGMENT_SHADER, defaultFrag)
 )
@@ -75,7 +75,7 @@ proc textureLoader(path: string): Texture =
       png[x, png.height - 1 - y] = png[x, y]
       png[x, y] = tmp
 
-  createTexture(png.width, png.height, PixelFormat.RGBA, png.data)
+  initTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
 let atlas = loadAtlas("data/sprites.atlas", textureLoader)
 
@@ -126,7 +126,7 @@ while glfw.WindowShouldClose(window) == 0:
 
   #batch.draw(tex, -0.5, -0.5, 1, 1)
 
-  #let m = createRot(rot).scl((1 + sin(rot * 4)) / 4 + 0.5, (1 + sin(rot * 4)) / 4 + 0.5).trn(0.2, 0.0)
+  #let m = initRot(rot).scl((1 + sin(rot * 4)) / 4 + 0.5, (1 + sin(rot * 4)) / 4 + 0.5).trn(0.2, 0.0)
   
   let proj = map(
     region(0, float winH, float winW, 0),
@@ -135,7 +135,7 @@ while glfw.WindowShouldClose(window) == 0:
 
   batch.projection = proj
   #let m = proj.trn(winW / 2, winH / 2).rot(rot)
-  let m = createRot(rot).trn(-150, -100)
+  let m = initRot(rot).trn(-150, -100)
 
   #batch.draw(makeTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
