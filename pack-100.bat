@@ -1,1 +1,1 @@
-java -cp runnable-texturepacker.jar com.badlogic.gdx.tools.texturepacker.TexturePacker "GFX-SRC/" "data/" "sprites.atlas"
+java -cp runnable-texturepacker.jar com.badlogic.gdx.tools.texturepacker.TexturePacker "src-gfx/" "data/" "sprites.atlas"

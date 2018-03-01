@@ -3,7 +3,7 @@
 /* The generated code is subject to the original license. */
 /* Compiled for: Windows, amd64, gcc */
 /* Command for C compiler:
-   gcc.exe -c  -w -mno-ms-bitfields -DWIN32_LEAN_AND_MEAN  -IC:\nim\lib -o C:\Users\Desktop-P1NKA\Desktop\nimengine\src\nimcache\stdlib_hashes.o C:\Users\Desktop-P1NKA\Desktop\nimengine\src\nimcache\stdlib_hashes.c */
+   gcc.exe -c  -w -mno-ms-bitfields -DWIN32_LEAN_AND_MEAN  -IC:\nim\lib -o C:\Users\Desktop-P1NKA\Desktop\nimgame\src\nimcache\stdlib_hashes.o C:\Users\Desktop-P1NKA\Desktop\nimgame\src\nimcache\stdlib_hashes.c */
 #define NIM_NEW_MANGLING_RULES
 #define NIM_INTBITS 64
 
