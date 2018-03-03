@@ -175,14 +175,20 @@ while glfw.WindowShouldClose(window) == 0:
   shapes.projection = proj
   
 
-  shapes.fillTriangle(
-    (10.0, 10.0),
-    (100.0, 100.0),
-    (20.0, 100.0),
-    (1.0, 0.0, 0.0, 1.0)
-  )
+  # shapes.trifill(
+  #   (10.0, 10.0),
+  #   (100.0, 100.0),
+  #   (20.0, 100.0),
+  #   (1.0, 0.0, 0.0, 1.0)
+  # )
 
-  shapes.line(10, 10, 100, 100, (0.0, 1.0, 0.0, 1.0))
+  # shapes.line(10, 10, 100, 100, (0.0, 1.0, 0.0, 1.0))
+
+
+  # shapes.rectfill((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 0.5))
+  # shapes.rect((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 1.0))
+
+  shapes.circlefill((winW / 2, winH / 2), 3.0, (0.0, 1.0, 0.0, 1.0))
 
   shapes.flush()
 

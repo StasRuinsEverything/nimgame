@@ -136,7 +136,7 @@ proc line*(batch: var ShapeBatch, x0: float, y0: float, x1: float, y1: float, co
   let (x0, y0) = (float32(v0.x), float32(v0.y))
   let (x1, y1) = (float32(v1.x), float32(v1.y))
 
-  if batch.mode != smLine:
+  if batch.mode != smLine or batch.coordIdx == cap:
     batch.flush()
     batch.mode = smLine
   
@@ -149,7 +149,7 @@ proc line*(batch: var ShapeBatch, x0: float, y0: float, x1: float, y1: float, co
 proc line*(batch: var ShapeBatch, a: Vec2, b: Vec2, col: Color) =
   batch.line(a.x, a.y, b.x, b.y, col)
 
-proc fillTriangle*(batch: var ShapeBatch, a: Vec2, b: Vec2, c: Vec2, col: Color) =
+proc trifill*(batch: var ShapeBatch, a: Vec2, b: Vec2, c: Vec2, col: Color) =
   let v0 = batch.projection.apply(a)
   let v1 = batch.projection.apply(b)
   let v2 = batch.projection.apply(c)
@@ -157,7 +157,7 @@ proc fillTriangle*(batch: var ShapeBatch, a: Vec2, b: Vec2, c: Vec2, col: Color)
   let (x1, y1) = (float32(v1.x), float32(v1.y))
   let (x2, y2) = (float32(v2.x), float32(v2.y))
 
-  if batch.mode != smFill:
+  if batch.mode != smFill or batch.coordIdx == cap:
     batch.flush()
     batch.mode = smFill
   
@@ -169,3 +169,50 @@ proc fillTriangle*(batch: var ShapeBatch, a: Vec2, b: Vec2, c: Vec2, col: Color)
 
   batch.pushCoord(x2, y2)
   batch.pushColor(col)
+
+proc rect*(batch: var ShapeBatch, pos: Vec2, width: float, height: float, col: Color) =
+  batch.line(pos.x, pos.y, pos.x + width, pos.y, col)
+  batch.line(pos.x + width, pos.y, pos.x + width, pos.y + height, col)
+  batch.line(pos.x + width, pos.y + height, pos.x, pos.y + height, col)
+  batch.line(pos.x, pos.y + height, pos.x, pos.y, col)
+
+proc rectfill*(batch: var ShapeBatch, pos: Vec2, width: float, height: float, col: Color) =
+  batch.trifill(
+    (pos.x, pos.y),
+    (pos.x + width, pos.y),
+    (pos.x + width, pos.y + height),
+    col
+  )
+
+  batch.trifill(
+    (pos.x + width, pos.y + height),
+    (pos.x, pos.y + height),
+    (pos.x, pos.y),
+    col
+  )
+
+proc circle*(batch: var ShapeBatch, pos: Vec2, rad: float, col: Color) =
+  var lastX = pos.x + rad
+  var lastY = pos.y
+  let pi2 = 2 * math.PI
+  let n = 35
+
+  for i in 0 ..< n:
+    let x = pos.x + rad * cos(float(i) * pi2 / float(n - 1))
+    let y = pos.y + rad * sin(float(i) * pi2 / float(n - 1))
+    batch.line(lastX, lastY, x, y, col)
+    lastX = x
+    lastY = y
+
+proc circlefill*(batch: var ShapeBatch, pos: Vec2, rad: float, col: Color) =
+  var lastX = pos.x + rad
+  var lastY = pos.y
+  let pi2 = 2 * math.PI
+  let n = 35
+
+  for i in 0 ..< n:
+    let x = pos.x + rad * cos(float(i) * pi2 / float(n - 1))
+    let y = pos.y + rad * sin(float(i) * pi2 / float(n - 1))
+    batch.trifill((lastX, lastY), (x, y), (pos.x, pos.y), col)
+    lastX = x
+    lastY = y
