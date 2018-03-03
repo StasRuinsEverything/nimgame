@@ -14,19 +14,13 @@ import
   engine/vec2,
   engine/spriteatlasloader,
   engine/shapebatch,
+  engine/mathutils,
+  engine/grid,
+  engine/ray,
   tilemap/tilemap
 
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
-
-
-
-
-
-
-
-
-
 
 
 
@@ -35,7 +29,7 @@ if glfw.Init() == 0:
 
 logging.addHandler(newConsoleLogger())
   
-var window = glfw.CreateWindow(800, 600, "GLFW3 WINDOW", nil, nil)
+var window = glfw.CreateWindow(1024, 768, "GLFW3 WINDOW", nil, nil)
 
 glfw.MakeContextCurrent(window)
 loadExtensions()
@@ -188,7 +182,32 @@ while glfw.WindowShouldClose(window) == 0:
   # shapes.rectfill((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 0.5))
   # shapes.rect((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 1.0))
 
-  shapes.circlefill((winW / 2, winH / 2), 3.0, (0.0, 1.0, 0.0, 1.0))
+  #shapes.circlefill((winW / 2, winH / 2), 3.0, (0.0, 1.0, 0.0, 1.0))
+
+  let grid = SquareGrid(
+    bounds: rect(0, 0, 1024, 768),
+    cellSize: 32.0
+  )
+
+  let ray: Ray = ((70.0, 70.0), (1.0, 2.0).unit())
+
+  proc dummy(x: int, y: int, t: float): bool =
+    shapes.circlefill((
+      float(x) * grid.cellSize + grid.cellSize / 2,
+      float(y) * grid.cellSize + grid.cellSize / 2), 
+    3, (0.0, 0.0, 0.0, 1.0))
+    result = true
+
+  for i in 0 .. int(grid.bounds.width / grid.cellSize):
+    for j in 0 .. int(grid.bounds.height / grid.cellSize):
+      var col = if (i + j) mod 2 == 0: (0.0, 0.0, 0.0, 0.2) else: (0.0, 0.0, 0.0, 0.25)
+      shapes.rectfill((float(j) * grid.cellSize, float(i) * grid.cellSize), grid.cellSize, grid.cellSize, col)
+
+  shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
+
+  grid.traverse(ray, 100, dummy)
+
+
 
   shapes.flush()
 
