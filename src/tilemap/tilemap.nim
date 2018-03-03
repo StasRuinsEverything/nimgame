@@ -49,6 +49,7 @@ proc readTileMap*(path: string, lookup: proc(path: string): Texture): TileMap =
   
   for ts in map.tilesets:
     maxGid = max(maxGid, ts.firstgid + ts.tilecount - 1)
+  
   map.regs = newSeq[TextureRegion](maxGid + 1)
 
   for ts in map.tilesets:

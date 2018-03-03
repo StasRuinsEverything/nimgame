@@ -13,6 +13,7 @@ import
   engine/mathutils,
   engine/vec2,
   engine/spriteatlasloader,
+  engine/shapebatch,
   tilemap/tilemap
 
 const defaultVert = slurp("simple.vert")
@@ -94,6 +95,8 @@ var batch = newSpriteBatch(program)
 var rot = 0.0
 
 
+var shapes = newShapeBatch()
+
 #echo atlas.dir.cyan.u0 * float atlas.pages[0].width
 #echo atlas.dir.cyan.v0 * float atlas.pages[0].height
 #echo atlas.dir.cyan.u1 * float atlas.pages[0].width
@@ -168,6 +171,22 @@ while glfw.WindowShouldClose(window) == 0:
 
   #batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
   batch.flush()
+
+  shapes.projection = proj
+  
+
+  shapes.fillTriangle(
+    (10.0, 10.0),
+    (100.0, 100.0),
+    (20.0, 100.0),
+    (1.0, 0.0, 0.0, 1.0)
+  )
+
+  shapes.line(10, 10, 100, 100, (0.0, 1.0, 0.0, 1.0))
+
+  shapes.flush()
+
+
 
 glfw.DestroyWindow(window)
 glfw.Terminate()

@@ -82,7 +82,7 @@ proc rot*(mat: Affine2, rads: float): Affine2 =
   mat.mul(initRot(rads))
 
 proc apply*(m: Affine2, v: Vec2): Vec2 =
-  Vec2(
-    x: m.data[0][0] * v.x + m.data[0][1] * v.y + m.data[0][2],
-    y: m.data[1][0] * v.x + m.data[1][1] * v.y + m.data[1][2],
+  (
+    m.data[0][0] * v.x + m.data[0][1] * v.y + m.data[0][2],
+    m.data[1][0] * v.x + m.data[1][1] * v.y + m.data[1][2],
   )
