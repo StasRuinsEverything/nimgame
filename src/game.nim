@@ -15,7 +15,7 @@ import
   engine/spriteatlasloader,
   engine/shapebatch,
   engine/mathutils,
-  engine/grid,
+  engine/squaregrid,
   engine/ray,
   tilemap/tilemap
 
@@ -198,8 +198,8 @@ while glfw.WindowShouldClose(window) == 0:
     3, (0.0, 0.0, 0.0, 1.0))
     result = true
 
-  for i in 0 .. int(grid.bounds.width / grid.cellSize):
-    for j in 0 .. int(grid.bounds.height / grid.cellSize):
+  for i in 0 .. int(grid.bounds.height / grid.cellSize):
+    for j in 0 .. int(grid.bounds.width / grid.cellSize):
       var col = if (i + j) mod 2 == 0: (0.0, 0.0, 0.0, 0.2) else: (0.0, 0.0, 0.0, 0.25)
       shapes.rectfill((float(j) * grid.cellSize, float(i) * grid.cellSize), grid.cellSize, grid.cellSize, col)
 
