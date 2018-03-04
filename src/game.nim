@@ -74,8 +74,11 @@ proc textureLoader(path: string): Texture =
 
   initTexture(png.width, png.height, PixelFormat.RGBA, png.data)
 
+proc tileSetLoader(path: string): TileSet =
+  readTileSet("data/" & path, textureLoader)
+
 let atlas = loadAtlas("../../data/sprites.atlas", textureLoader)
-let map = readTilemap("data/level1.json", textureLoader)
+let map = readTilemap("data/level1.json", tileSetLoader)
 
 let tex = textureLoader("logo.png")
 

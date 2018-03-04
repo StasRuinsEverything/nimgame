@@ -1,0 +1,12 @@
+{ "columns":41,
+ "image":"dawn_of_the_gods.png",
+ "imageheight":1504,
+ "imagewidth":1312,
+ "margin":0,
+ "name":"dawn_of_the_gods",
+ "spacing":0,
+ "tilecount":1927,
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset"
+}
