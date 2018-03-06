@@ -96,9 +96,19 @@ proc rayTileMapDebug(shapes: var ShapeBatch, ray: Ray, map: TileMap) =
       )
   
   grid.traverse(ray, 2000, dummy)
-  
 
-  
+proc debugDraw(map: TileMap, shapes: var ShapeBatch) =
+  for layer in map.layers:
+    for row in 0 ..< layer.height:
+      for col in 0 ..< layer.width:
+        let gid = layer[row, col]
+        if gid != 0:
+          let tile = map.getTile(gid)
+          for seg in tile.segs:
+            let x = float(col) * 32.0
+            let y = float(row) * 32.0
+            shapes.line(seg.a + (x, y), seg.b + (x, y), (1.0, 0.0, 0.0, 1.0))
+
 proc draw(batch: var SpriteBatch, map: TileMap) =
   for layer in map.layers:
     for row in 0 ..< layer.height:
@@ -187,7 +197,7 @@ var shapes = newShapeBatch()
 var frame = 0.0
 #echo atlas
 
-var p1 = (x: 771.0, y: 214.0)  #vec2(170, 270)
+var p1 = (x: 32.0*10.0, y: 32.0*9.0)  #vec2(170, 270)
 var p2 = (x: 470.0, y: 749.0) #vec2(270, 330)
 
 while glfw.WindowShouldClose(window) == 0:
@@ -274,27 +284,6 @@ while glfw.WindowShouldClose(window) == 0:
 
   shapes.projection = proj
   
-
-  # shapes.trifill(
-  #   (10.0, 10.0),
-  #   (100.0, 100.0),
-  #   (20.0, 100.0),
-  #   (1.0, 0.0, 0.0, 1.0)
-  # )
-
-  # shapes.line(10, 10, 100, 100, (0.0, 1.0, 0.0, 1.0))
-
-
-  # shapes.rectfill((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 0.5))
-  # shapes.rect((200.0, 200.0), 200, 100, (0.0, 0.0, 1.0, 1.0))
-
-  #shapes.circlefill((winW / 2, winH / 2), 3.0, (0.0, 1.0, 0.0, 1.0))
-
-  # let grid = SquareGrid(
-  #   bounds: rect(0, 0, 1024, 768),
-  #   cellSize: 32.0
-  # )
-
   if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
     glfw.GetCursorPos(window, addr p2.x, addr p2.y)
   
@@ -304,47 +293,13 @@ while glfw.WindowShouldClose(window) == 0:
   let ray: Ray = (p1, (p2 - p1).unit)
   let res = ray.intersect(map, map.layers[2])
 
-  
-
-
-
-  for layer in map.layers:
-    for row in 0 ..< layer.height:
-      for col in 0 ..< layer.width:
-        let gid = layer[row, col]
-        if gid != 0:
-          let tile = map.getTile(gid)
-          for seg in tile.segs:
-            let x = float(col) * 32.0
-            let y = float(row) * 32.0
-            shapes.line(seg.a + (x, y), seg.b + (x, y), (1.0, 0.0, 0.0, 1.0))
-          #batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
-
-
-
-  # let v1 = vec2(200, 200)
-  # let v2 = vec2(300, 240)
-
-  # shapes.line(v1, v2, (0.0, 0.0, 0.0, 1.0))
-  # shapes.line(v1, v1 + (v2 - v1).norm, (0.0, 0.0, 0.0, 1.0))
-
-  # shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
-
-  # let tmp = ray.intersect(v1, v2)
-  # if tmp.isSome:
-  #   shapes.circlefill(tmp.get.point, 3, (1.0, 0.0, 0.0, 1.0))
-
-  #echo p1, " ", p2
+  map.debugDraw(shapes)
 
   shapes.line(p1, p2, (0.0, 0.0, 0.0, 1.0))
   rayTileMapDebug(shapes, ray, map)
 
   if res.isSome:
     shapes.circlefill(res.get.point, 3, (1.0, 0.0, 0.0, 1.0))
-
-  # grid.traverse(ray, 100, dummy)
-
-
 
   shapes.flush()
 
