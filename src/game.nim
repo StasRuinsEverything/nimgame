@@ -23,21 +23,25 @@ import
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
 
-
-#proc 
-
-
-
 proc intersect(ray: Ray, v1: Vec2, v2: Vec2): Option[tuple[point: Vec2, dist: float]] =
-  let n = (v2 - v1).norm
-  let t = (ray.orig - v1).dot(n) / -ray.dir.dot(n)
-  let p = ray.orig + ray.dir * t
+  let d = v2 - v1
+  let n = d.norm
+  let ndir = ray.dir.dot(n)
+
+  if abs(ndir) > 0.00001:
+    let t = (ray.orig - v1).dot(n) / -ndir
+    let p = ray.orig + ray.dir * t
   
-  if p.within(v1, v2):
-    result = some((point: p, dist: t))
+    if abs(d.x) > abs(d.y):
+      if p.x.within(v1.x, v2.x):
+        result = some((point: p, dist: t))
+    else:
+      if p.y.within(v1.y, v2.y):
+        result = some((point: p, dist: t))
 
 proc intersect(ray: Ray, tile: Tile): Option[tuple[point: Vec2, dist: float]] =
   var tmin = Inf
+
   for seg in tile.segs:
     let r = ray.intersect(seg.a, seg.b)
     if r.isSome and abs(r.get.dist) < tmin:
@@ -50,24 +54,59 @@ proc intersect(ray: Ray, map: TileMap, layer: TileLayer): Option[tuple[point: Ve
     cellSize: map.tileWidth
   )
   var resptr = addr result
-  #echo map.tileWidth, map.tileHeight, grid.cellSize
 
-  grid.traverse(ray, 200, proc(col: int, row: int, t: float): bool =
-    let x = float(col) * 32
-    let y = float(row) * 32
-
+  grid.traverse(ray, 2000, proc(col: int, row: int, t: float): bool =
+    if not map.validLoc(col, row):
+      return false
+    
+    let offs = vec2(float(col) * 32, float(row) * 32)
     let ray2 = (
-      orig: ray.orig - vec2(x, y),
+      orig: ray.orig - offs,
       dir: ray.dir
     )
     var r = ray2.intersect(map.getTile(layer[row, col]))
 
     if r.isSome:
-      resptr[] = some((r.get.point + vec2(x, y), r.get.dist))
+      resptr[] = some((r.get.point + offs, r.get.dist))
       result = false
     else:
       result = true
   )
+
+proc rayTileMapDebug(shapes: var ShapeBatch, ray: Ray, map: TileMap) =
+  let grid = SquareGrid(
+    bounds: rect(0, 0, float(map.cols) * map.tileWidth, float(map.rows) * map.tileHeight),
+    cellSize: map.tileWidth
+  )
+
+  let shapesPtr = addr shapes
+  proc dummy(x: int, y: int, t: float): bool =
+    shapesPtr[].circlefill((
+      float(x) * grid.cellSize + grid.cellSize / 2,
+      float(y) * grid.cellSize + grid.cellSize / 2), 
+    3, (0.0, 0.0, 0.0, 1.0))
+    result = true
+
+  for i in 0 .. int(grid.bounds.height / grid.cellSize):
+    for j in 0 .. int(grid.bounds.width / grid.cellSize):
+      var col = if (i + j) mod 2 == 0: (0.0, 0.0, 0.0, 0.2) else: (0.0, 0.0, 0.0, 0.25)
+      shapes.rectfill(
+        (float(j) * grid.cellSize, float(i) * grid.cellSize),
+        grid.cellSize, grid.cellSize, col
+      )
+  
+  grid.traverse(ray, 2000, dummy)
+  
+
+  
+proc draw(batch: var SpriteBatch, map: TileMap) =
+  for layer in map.layers:
+    for row in 0 ..< layer.height:
+      for col in 0 ..< layer.width:
+        let gid = layer[row, col]
+        if gid != 0:
+          let tile = map.getTile(gid)
+          batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
 
 
 if glfw.Init() == 0:
@@ -148,6 +187,9 @@ var shapes = newShapeBatch()
 var frame = 0.0
 #echo atlas
 
+var p1 = (x: 771.0, y: 214.0)  #vec2(170, 270)
+var p2 = (x: 470.0, y: 749.0) #vec2(270, 330)
+
 while glfw.WindowShouldClose(window) == 0:
   glfw.PollEvents()
   glfw.SwapBuffers(window)
@@ -164,7 +206,7 @@ while glfw.WindowShouldClose(window) == 0:
   var winW, winH: cint
   glfw.GetFramebufferSize(window, addr winW, addr winH)
 
-  glClearColor(0, 0, 0, 1)
+  glClearColor(0.4, 0.4, 0.4, 1)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
   glViewport(0, 0, winW, winH)
   glEnable(GL_BLEND)
@@ -188,8 +230,8 @@ while glfw.WindowShouldClose(window) == 0:
   #batch.draw(initTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
   #                               -0.5, -0.5, 1, 1, m)
 
-  batch.draw(initTextureRegion(tex, 0, 0, tex.width, tex.height),
-                                winW / 2, winH / 2, 300, 200, m)
+  # batch.draw(initTextureRegion(tex, 0, 0, tex.width, tex.height),
+  #                               winW / 2, winH / 2, 300, 200, m)
   
 
   #batch.draw(atlas.dir.skull, winW / 2, winH / 2, 200, 200, m)
@@ -199,16 +241,30 @@ while glfw.WindowShouldClose(window) == 0:
 
   #batch.draw(map.regs[30], 10, 10, 100, 100)
   
-  for layer in map.layers:
-    for row in 0 ..< layer.height:
-      for col in 0 ..< layer.width:
-        let gid = layer[row, col]
-        if gid != 0:
-          let tile = map.getTile(gid)
-          batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
+
+
+
+  # for layer in map.layers:
+  #   for row in 0 ..< layer.height:
+  #     for col in 0 ..< layer.width:
+  #       let gid = layer[row, col]
+  #       if gid != 0:
+  #         let tile = map.getTile(gid)
+  #         batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
 
   
-  batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
+  # batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
+
+
+
+
+
+
+
+
+
+
+
   #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
 
 
@@ -234,33 +290,22 @@ while glfw.WindowShouldClose(window) == 0:
 
   #shapes.circlefill((winW / 2, winH / 2), 3.0, (0.0, 1.0, 0.0, 1.0))
 
-  let grid = SquareGrid(
-    bounds: rect(0, 0, 1024, 768),
-    cellSize: 32.0
-  )
+  # let grid = SquareGrid(
+  #   bounds: rect(0, 0, 1024, 768),
+  #   cellSize: 32.0
+  # )
 
-  let p1 = vec2(170, 270)
-  var p2: Vec2
-
-  glfw.GetCursorPos(window, addr p2.x, addr p2.y)
+  if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+    glfw.GetCursorPos(window, addr p2.x, addr p2.y)
+  
+  if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_RIGHT) == glfw.PRESS:
+    glfw.GetCursorPos(window, addr p1.x, addr p1.y)
 
   let ray: Ray = (p1, (p2 - p1).unit)
   let res = ray.intersect(map, map.layers[2])
 
   
 
-
-  proc dummy(x: int, y: int, t: float): bool =
-    shapes.circlefill((
-      float(x) * grid.cellSize + grid.cellSize / 2,
-      float(y) * grid.cellSize + grid.cellSize / 2), 
-    3, (0.0, 0.0, 0.0, 1.0))
-    result = true
-
-  for i in 0 .. int(grid.bounds.height / grid.cellSize):
-    for j in 0 .. int(grid.bounds.width / grid.cellSize):
-      var col = if (i + j) mod 2 == 0: (0.0, 0.0, 0.0, 0.2) else: (0.0, 0.0, 0.0, 0.25)
-      shapes.rectfill((float(j) * grid.cellSize, float(i) * grid.cellSize), grid.cellSize, grid.cellSize, col)
 
 
   for layer in map.layers:
@@ -277,22 +322,27 @@ while glfw.WindowShouldClose(window) == 0:
 
 
 
-  let v1 = vec2(200, 200)
-  let v2 = vec2(300, 240)
+  # let v1 = vec2(200, 200)
+  # let v2 = vec2(300, 240)
 
-  shapes.line(v1, v2, (0.0, 0.0, 0.0, 1.0))
-  shapes.line(v1, v1 + (v2 - v1).norm, (0.0, 0.0, 0.0, 1.0))
+  # shapes.line(v1, v2, (0.0, 0.0, 0.0, 1.0))
+  # shapes.line(v1, v1 + (v2 - v1).norm, (0.0, 0.0, 0.0, 1.0))
 
-  shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
+  # shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
 
-  let tmp = ray.intersect(v1, v2)
-  if tmp.isSome:
-    shapes.circlefill(tmp.get.point, 3, (1.0, 0.0, 0.0, 1.0))
+  # let tmp = ray.intersect(v1, v2)
+  # if tmp.isSome:
+  #   shapes.circlefill(tmp.get.point, 3, (1.0, 0.0, 0.0, 1.0))
+
+  #echo p1, " ", p2
+
+  shapes.line(p1, p2, (0.0, 0.0, 0.0, 1.0))
+  rayTileMapDebug(shapes, ray, map)
 
   if res.isSome:
     shapes.circlefill(res.get.point, 3, (1.0, 0.0, 0.0, 1.0))
 
-  grid.traverse(ray, 100, dummy)
+  # grid.traverse(ray, 100, dummy)
 
 
 

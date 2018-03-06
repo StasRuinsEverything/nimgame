@@ -52,6 +52,8 @@ type
 
 proc cols*(map: TileMap): int = map.width
 proc rows*(map: TileMap): int = map.height
+proc validLoc*(map: TileMap, col: int, row: int): bool =
+  col >= 0 and row >= 0 and col < map.cols and row < map.rows
 
 proc `[]`*(layer: TileLayer, row: int, col: int): int =
   layer.data[layer.width * row + col]
