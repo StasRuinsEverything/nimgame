@@ -4,9 +4,15 @@ type
   Vec2* = tuple
     x, y: float
 
+proc vec2*(x: float, y: float): Vec2 = (x, y)
+
 proc `+`*(a, b: Vec2): Vec2 = (a.x + b.x, a.y + b.y)
 proc `-`*(a, b: Vec2): Vec2 = (a.x - b.x, a.y - b.y)
 proc `*`*(v: Vec2, k: float): Vec2 = (v.x * k, v.y * k)
+
+proc `+=`*(a: var Vec2, b: Vec2) =
+  a.x += b.x
+  a.y += b.y
 
 proc dot*(a, b: Vec2): float = a.x * b.x + a.y * b.y
 proc len2*(v: Vec2): float = dot(v, v)

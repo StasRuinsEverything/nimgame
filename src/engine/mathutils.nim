@@ -24,6 +24,19 @@ proc rect*(x, y, width, height: float): Rect =
     height: height
   )
 
+proc within*(v: float, a: float, b: float): bool =
+  v >= min(a, b) and v <= max(a, b)
+
+proc within*(v: Vec2, p1: Vec2, p2: Vec2): bool =
+  result = v.x.within(p1.x, p2.x) and v.y.within(p1.y, p2.y)
+
+proc contains*(r: Region, x: float, y: float): bool =
+  result =
+    x >= min(r.x0, r.x1) and
+    x <= max(r.x0, r.x1) and
+    y >= min(r.y0, r.y1) and
+    y <= max(r.y0, r.y1)
+
 proc contains*(r: Rect, x: float, y: float): bool =
   result =
     x >= r.x and

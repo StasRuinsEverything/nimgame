@@ -12,6 +12,8 @@ type
     tilesets*: seq[TileSetStub]
     layers*: seq[TileLayer]
     tiles*: seq[Tile]
+    tileWidth*: float
+    tileHeight*: float
 
   TileLayer* = object
     height*: int          # tile columns
@@ -47,6 +49,9 @@ type
     margin: int
 
     tiles: seq[Tile]
+
+proc cols*(map: TileMap): int = map.width
+proc rows*(map: TileMap): int = map.height
 
 proc `[]`*(layer: TileLayer, row: int, col: int): int =
   layer.data[layer.width * row + col]
@@ -109,6 +114,8 @@ proc readTileMap*(path: string, lookup: proc(path: string): TileSet): TileMap =
   var map = TileMap(
     width: j["width"].to(int),
     height: j["height"].to(int),
+    tileWidth: j["tilewidth"].to(float),
+    tileHeight: j["tileheight"].to(float),
     tilesets: j["tilesets"].to(seq[TileSetStub]),
     layers: j["layers"].to(seq[TileLayer]),
     tiles: nil
@@ -125,17 +132,5 @@ proc readTileMap*(path: string, lookup: proc(path: string): TileSet): TileMap =
   for stub in map.tilesets:
     let ts = lookup(stub.source)
     map.tiles[stub.firstgid ..< stub.firstgid + ts.tilecount] = ts.tiles
-
-    # for i in 0 ..< ts.tilecount:
-    #   let row = i div ts.columns
-    #   let col = i mod ts.columns
-
-    #   map.regs[i + stub.firstgid] = initTextureRegion(
-    #     ts.tex,
-    #     ts.margin + col * (ts.tilewidth + ts.spacing),
-    #     ts.margin + row * (ts.tileheight + ts.spacing),
-    #     ts.tilewidth,
-    #     ts.tileheight
-    #   )
   
   result = map

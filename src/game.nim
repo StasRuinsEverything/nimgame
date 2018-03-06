@@ -3,6 +3,7 @@ import opengl
 import nimPNG
 import logging
 import math
+import options
 
 import
   engine/glutils,
@@ -22,6 +23,51 @@ import
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
 
+
+#proc 
+
+
+
+proc intersect(ray: Ray, v1: Vec2, v2: Vec2): Option[tuple[point: Vec2, dist: float]] =
+  let n = (v2 - v1).norm
+  let t = (ray.orig - v1).dot(n) / -ray.dir.dot(n)
+  let p = ray.orig + ray.dir * t
+  
+  if p.within(v1, v2):
+    result = some((point: p, dist: t))
+
+proc intersect(ray: Ray, tile: Tile): Option[tuple[point: Vec2, dist: float]] =
+  var tmin = Inf
+  for seg in tile.segs:
+    let r = ray.intersect(seg.a, seg.b)
+    if r.isSome and abs(r.get.dist) < tmin:
+      tmin = r.get.dist
+      result = some(r.get)
+
+proc intersect(ray: Ray, map: TileMap, layer: TileLayer): Option[tuple[point: Vec2, dist: float]] =
+  let grid = SquareGrid(
+    bounds: rect(0, 0, float(map.cols) * map.tileWidth, float(map.rows) * map.tileHeight),
+    cellSize: map.tileWidth
+  )
+  var resptr = addr result
+  #echo map.tileWidth, map.tileHeight, grid.cellSize
+
+  grid.traverse(ray, 200, proc(col: int, row: int, t: float): bool =
+    let x = float(col) * 32
+    let y = float(row) * 32
+
+    let ray2 = (
+      orig: ray.orig - vec2(x, y),
+      dir: ray.dir
+    )
+    var r = ray2.intersect(map.getTile(layer[row, col]))
+
+    if r.isSome:
+      resptr[] = some((r.get.point + vec2(x, y), r.get.dist))
+      result = false
+    else:
+      result = true
+  )
 
 
 if glfw.Init() == 0:
@@ -193,7 +239,16 @@ while glfw.WindowShouldClose(window) == 0:
     cellSize: 32.0
   )
 
-  let ray: Ray = ((70.0, 70.0), (1.0, 2.0).unit())
+  let p1 = vec2(170, 270)
+  var p2: Vec2
+
+  glfw.GetCursorPos(window, addr p2.x, addr p2.y)
+
+  let ray: Ray = (p1, (p2 - p1).unit)
+  let res = ray.intersect(map, map.layers[2])
+
+  
+
 
   proc dummy(x: int, y: int, t: float): bool =
     shapes.circlefill((
@@ -222,7 +277,20 @@ while glfw.WindowShouldClose(window) == 0:
 
 
 
+  let v1 = vec2(200, 200)
+  let v2 = vec2(300, 240)
+
+  shapes.line(v1, v2, (0.0, 0.0, 0.0, 1.0))
+  shapes.line(v1, v1 + (v2 - v1).norm, (0.0, 0.0, 0.0, 1.0))
+
   shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
+
+  let tmp = ray.intersect(v1, v2)
+  if tmp.isSome:
+    shapes.circlefill(tmp.get.point, 3, (1.0, 0.0, 0.0, 1.0))
+
+  if res.isSome:
+    shapes.circlefill(res.get.point, 3, (1.0, 0.0, 0.0, 1.0))
 
   grid.traverse(ray, 100, dummy)
 
