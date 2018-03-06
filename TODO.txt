@@ -1,0 +1,5 @@
+sprite atlas loader, tilemap reader, tileset reader: construct proper relative paths for dependencies, remove hardcoded path hack, throw error when ignored user properties are set 
+sprite atlas loader: handle empty last line, allocate on the heap?
+find faster PNG loader
+tilemap.nim: solve relative import issue
+sprite batch: optimize for special cases (no affine transform, raw texture)

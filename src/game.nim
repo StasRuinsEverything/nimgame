@@ -158,7 +158,8 @@ while glfw.WindowShouldClose(window) == 0:
       for col in 0 ..< layer.width:
         let gid = layer[row, col]
         if gid != 0:
-          batch.draw(map.regs[gid], float col * 32, float row * 32, 32, 32)
+          let tile = map.getTile(gid)
+          batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
 
   
   batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
@@ -205,6 +206,21 @@ while glfw.WindowShouldClose(window) == 0:
     for j in 0 .. int(grid.bounds.width / grid.cellSize):
       var col = if (i + j) mod 2 == 0: (0.0, 0.0, 0.0, 0.2) else: (0.0, 0.0, 0.0, 0.25)
       shapes.rectfill((float(j) * grid.cellSize, float(i) * grid.cellSize), grid.cellSize, grid.cellSize, col)
+
+
+  for layer in map.layers:
+    for row in 0 ..< layer.height:
+      for col in 0 ..< layer.width:
+        let gid = layer[row, col]
+        if gid != 0:
+          let tile = map.getTile(gid)
+          for seg in tile.segs:
+            let x = float(col) * 32.0
+            let y = float(row) * 32.0
+            shapes.line(seg.a + (x, y), seg.b + (x, y), (1.0, 0.0, 0.0, 1.0))
+          #batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
+
+
 
   shapes.line(ray.orig, ray.orig + ray.dir * 100, (0.0, 0.0, 0.0, 1.0))
 
