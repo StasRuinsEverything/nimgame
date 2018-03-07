@@ -13,8 +13,8 @@ proc remf(x: float, dir: float): float =
 
 template traverse*(grid: SquareGrid, ray: Ray, maxDist: float, callback: untyped): untyped =
   let md = maxDist / grid.cellSize
-  let x0 = ray.orig.x / grid.cellSize
-  let y0 = ray.orig.y / grid.cellSize
+  let x0 = (ray.orig.x - grid.bounds.x) / grid.cellSize
+  let y0 = (ray.orig.y - grid.bounds.y) / grid.cellSize
   var x = int trunc(x0)
   var y = int trunc(y0)
   
@@ -26,8 +26,6 @@ template traverse*(grid: SquareGrid, ray: Ray, maxDist: float, callback: untyped
   
   var tRemX = if ray.dir.x == 0: Inf else: remf(x0, ray.dir.x) * tPerX
   var tRemY = if ray.dir.y == 0: Inf else: remf(y0, ray.dir.y) * tPerY
-
-  echo x0, " ", x, " ", tRemX
 
   var t = 0.0
 
@@ -42,3 +40,12 @@ template traverse*(grid: SquareGrid, ray: Ray, maxDist: float, callback: untyped
       t += tRemY
       tRemX -= tRemY
       tRemY = tPerY
+
+proc toVec2*(grid: SquareGrid, col: int, row: int): tuple[x: float, y: float] =
+  (grid.bounds.x + float(col) * grid.cellSize, grid.bounds.y + float(row) * grid.cellSize)
+
+proc toRow*(grid: SquareGrid, x: float): int =
+  int((x - grid.bounds.x) / grid.cellSize)
+
+proc toCol*(grid: SquareGrid, y: float): int =
+  int((y - grid.bounds.y) / grid.cellSize)

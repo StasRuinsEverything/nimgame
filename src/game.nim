@@ -23,23 +23,27 @@ import
 const defaultVert = slurp("simple.vert")
 const defaultFrag = slurp("simple.frag")
 
-proc intersect(ray: Ray, v1: Vec2, v2: Vec2): Option[tuple[point: Vec2, dist: float]] =
-  let d = v2 - v1
-  let n = d.norm
-  let ndir = ray.dir.dot(n)
+type
+  Player = object
+    pos: Vec2
+    vel: Vec2
+    width: float
+    height: float
 
-  if abs(ndir) > 0.00001:
-    let t = (ray.orig - v1).dot(n) / -ndir
-    let p = ray.orig + ray.dir * t
-  
-    if abs(d.x) > abs(d.y):
-      if p.x.within(v1.x, v2.x):
-        result = some((point: p, dist: t))
-    else:
-      if p.y.within(v1.y, v2.y):
-        result = some((point: p, dist: t))
+const grav = 800.0
 
-proc intersect(ray: Ray, tile: Tile): Option[tuple[point: Vec2, dist: float]] =
+proc move(p: var Player, dt: float) =
+  p.vel.y += grav * dt
+  p.pos += p.vel * dt
+
+proc bounce(vel: Vec2, norm: Vec2, elast: float, frict: float): Vec2 =
+  let t = norm.norm
+  let vn = vel.dot(norm) * -elast
+  let vt = vel.dot(t) * frict
+  norm * vn + t * vt
+
+
+proc intersect(ray: Ray, tile: Tile): Option[RayIntersection] =
   var tmin = Inf
 
   for seg in tile.segs:
@@ -48,7 +52,7 @@ proc intersect(ray: Ray, tile: Tile): Option[tuple[point: Vec2, dist: float]] =
       tmin = r.get.dist
       result = some(r.get)
 
-proc intersect(ray: Ray, map: TileMap, layer: TileLayer): Option[tuple[point: Vec2, dist: float]] =
+proc intersect(ray: Ray, map: TileMap, layer: TileLayer): Option[RayIntersection] =
   let grid = SquareGrid(
     bounds: rect(0, 0, float(map.cols) * map.tileWidth, float(map.rows) * map.tileHeight),
     cellSize: map.tileWidth
@@ -67,11 +71,46 @@ proc intersect(ray: Ray, map: TileMap, layer: TileLayer): Option[tuple[point: Ve
     var r = ray2.intersect(map.getTile(layer[row, col]))
 
     if r.isSome:
-      resptr[] = some((r.get.point + offs, r.get.dist))
+      let r = r.get
+      resptr[] = some((r.point + offs, r.norm, r.dist))
       result = false
     else:
       result = true
   )
+
+
+proc castVert(map: TileMap, layer: TileLayer, srcX, srcY, destY: float): Option[RayIntersection] =
+  let grid = SquareGrid(
+    bounds: rect(0, 0, float(map.cols) * map.tileWidth, float(map.rows) * map.tileHeight),
+    cellSize: map.tileWidth
+  )
+  
+  let col = grid.toCol(srcX)
+  var row = clamp(grid.toRow(srcY), 0, map.rows - 1)
+  var destRow = clamp(grid.toRow(destY), 0, map.rows - 1)
+  var step = if srcY < destY: 1 else: -1
+
+  while true:
+    let offs = vec2(float(col) * map.tileWidth, float(row) * map.tileHeight)
+    let ray = (
+      (srcX - offs.x, srcY - offs.y),
+      (0.0, float(step))
+    )
+    var r = ray.intersect(map.getTile(layer[row, col]))
+
+    if r.isSome:
+      let r = r.get
+      result = some((r.point + offs, r.norm, r.dist))
+      break
+    
+    if row == destRow:
+      break
+    
+    row += step
+    
+
+
+
 
 proc rayTileMapDebug(shapes: var ShapeBatch, ray: Ray, map: TileMap) =
   let grid = SquareGrid(
@@ -119,15 +158,7 @@ proc draw(batch: var SpriteBatch, map: TileMap) =
           batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
 
 
-if glfw.Init() == 0:
-  raise newException(Exception, "Failed to Initialize GLFW")
 
-logging.addHandler(newConsoleLogger())
-  
-var window = glfw.CreateWindow(1024, 768, "GLFW3 WINDOW", nil, nil)
-
-glfw.MakeContextCurrent(window)
-loadExtensions()
 
 proc getStandardLocations(program: GLuint): ProgramLocations =
   return ProgramLocations(
@@ -136,16 +167,6 @@ proc getStandardLocations(program: GLuint): ProgramLocations =
     texCoords: glGetAttribLocation(program, "a_texcoord"),
     texture: glGetUniformLocation(program, "u_texture")
   )
-
-let handle = initProgram(
-  createShader(GL_VERTEX_SHADER, defaultVert),
-  createShader(GL_FRAGMENT_SHADER, defaultFrag)
-)
-
-let program = Program(
-  handle: handle,
-  locations: getStandardLocations(handle)
-)
 
 proc `[]`(png: PNGResult, x, y: int): tuple[r: char, g: char, b: char, a: char] =
  let i = (y * png.width + x) * 4
@@ -172,16 +193,54 @@ proc textureLoader(path: string): Texture =
 proc tileSetLoader(path: string): TileSet =
   readTileSet("data/" & path, textureLoader)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if glfw.Init() == 0:
+  raise newException(Exception, "Failed to Initialize GLFW")
+
+logging.addHandler(newConsoleLogger())
+  
+var window = glfw.CreateWindow(1024, 768, "GLFW3 WINDOW", nil, nil)
+
+glfw.MakeContextCurrent(window)
+loadExtensions()
+
+
+let handle = initProgram(
+  createShader(GL_VERTEX_SHADER, defaultVert),
+  createShader(GL_FRAGMENT_SHADER, defaultFrag)
+)
+
+let program = Program(
+  handle: handle,
+  locations: getStandardLocations(handle)
+)
+
 let atlas = loadAtlas("../../data/sprites.atlas", textureLoader)
 let map = readTilemap("data/level1.json", tileSetLoader)
-
-let tex = textureLoader("logo.png")
-
-#let tex1 = textureLoader("sprites.png")
-#let tex2 = textureLoader("sprites2.png")
-#let tex3 = textureLoader("sprites3.png")
-#let tex4 = textureLoader("sprites4.png")
-#let tex5 = textureLoader("sprites5.png")
 
 var batch = newSpriteBatch(program)
 var rot = 0.0
@@ -189,30 +248,80 @@ var rot = 0.0
 
 var shapes = newShapeBatch()
 
-#echo atlas.dir.cyan.u0 * float atlas.pages[0].width
-#echo atlas.dir.cyan.v0 * float atlas.pages[0].height
-#echo atlas.dir.cyan.u1 * float atlas.pages[0].width
-#echo atlas.dir.cyan.v1 * float atlas.pages[0].height
-
 var frame = 0.0
-#echo atlas
 
 var p1 = (x: 32.0*10.0, y: 32.0*9.0)  #vec2(170, 270)
 var p2 = (x: 470.0, y: 749.0) #vec2(270, 330)
 
+var player = Player(
+  pos: vec2(100, 100),
+  width: 30,
+  height: 50
+)
+
+var lastTime = glfw.GetTime()
+
 while glfw.WindowShouldClose(window) == 0:
+  let time = glfw.GetTime()
+
   glfw.PollEvents()
   glfw.SwapBuffers(window)
 
   if glfw.GetKey(window,glfw.KEY_ESCAPE) == 1:
       glfw.SetWindowShouldClose(window,1)
 
+  if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+    player.vel.y = 0
+    player.vel.x = 0
+    glfw.GetCursorPos(window, addr player.pos.x, addr player.pos.y)
+
+
+
+  #player.vel.x += 1500 * (time - lastTime)
+  player.move(time - lastTime)
+
+  let srcY = player.pos.y + player.height / 2
+
+  let res1 = map.castVert(
+    map.layers[2],
+    player.pos.x - player.width / 2,
+    srcY - 10,
+    srcY + 100
+  )
+
+  let res2 = map.castVert(
+    map.layers[2],
+    player.pos.x + player.width / 2,
+    srcY - 10,
+    srcY + 100
+  )
+
+  let flag1 = res1.isSome and res1.get.dist < 10
+  let flag2 = res2.isSome and res2.get.dist < 10
+
+  if flag1 or flag2:
+    let y1 = if res1.isSome: res1.get.point.y else: srcY
+    let y2 = if res2.isSome: res2.get.point.y else: srcY
+
+    if y1 < y2:
+      player.pos.y = min(y1, y2) - player.height / 2
+      player.vel = player.vel.bounce(res1.get.norm.unit, 0, 0.9)
+      echo res1.get.norm.unit
+    else:
+      player.pos.y = min(y1, y2) - player.height / 2
+      player.vel = player.vel.bounce(res2.get.norm.unit, 0, 0.9)
+      echo res2.get.norm.unit
+
+
+
+
+
+
+
+
   rot += 0.01
   frame += 0.25
   
-  #let tmp = vec2(0, 0)
-  #tmp.
-
   var winW, winH: cint
   glfw.GetFramebufferSize(window, addr winW, addr winH)
 
@@ -222,86 +331,52 @@ while glfw.WindowShouldClose(window) == 0:
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-
-
-  #batch.draw(tex, -0.5, -0.5, 1, 1)
-
-  #let m = initRot(rot).scl((1 + sin(rot * 4)) / 4 + 0.5, (1 + sin(rot * 4)) / 4 + 0.5).trn(0.2, 0.0)
-  
   let proj = map(
     region(0, float winH, float winW, 0),
     region(-1, -1, 1, 1)
   )
 
   batch.projection = proj
-  #let m = proj.trn(winW / 2, winH / 2).rot(rot)
-  let m = initRot(rot).trn(-150, -100)
-
-  #batch.draw(initTextureRegion(tex, 10, 10, tex.width-20, tex.height-20),
-  #                               -0.5, -0.5, 1, 1, m)
-
-  # batch.draw(initTextureRegion(tex, 0, 0, tex.width, tex.height),
-  #                               winW / 2, winH / 2, 300, 200, m)
-  
-
-  #batch.draw(atlas.dir.skull, winW / 2, winH / 2, 200, 200, m)
-
-  let anim = atlas.dir.rot
-  let fn = int(frame) mod anim.len
-
-  #batch.draw(map.regs[30], 10, 10, 100, 100)
-  
-
-
-
-  # for layer in map.layers:
-  #   for row in 0 ..< layer.height:
-  #     for col in 0 ..< layer.width:
-  #       let gid = layer[row, col]
-  #       if gid != 0:
-  #         let tile = map.getTile(gid)
-  #         batch.draw(tile.reg, float col * 32, float row * 32, 32, 32)
-
-  
-  # batch.drawWithHeight(anim[fn], winW / 2, winH / 2, 200, m)
-
-
-
-
-
-
-
-
-
-
-
-  #batch.draw(atlas.dir.rot[1], winW / 2, winH / 2, m)
-
-
-
-  #batch.draw(atlas.dir.red_bright, -100, -100, 200, 200, m)
+  batch.draw(map)
   batch.flush()
 
   shapes.projection = proj
-  
-  if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
-    glfw.GetCursorPos(window, addr p2.x, addr p2.y)
-  
-  if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_RIGHT) == glfw.PRESS:
-    glfw.GetCursorPos(window, addr p1.x, addr p1.y)
-
-  let ray: Ray = (p1, (p2 - p1).unit)
-  let res = ray.intersect(map, map.layers[2])
 
   map.debugDraw(shapes)
 
-  shapes.line(p1, p2, (0.0, 0.0, 0.0, 1.0))
-  rayTileMapDebug(shapes, ray, map)
+  shapes.rectfill(
+    player.pos.x - player.width / 2,
+    player.pos.y - player.height / 2,
+    player.width,
+    player.height,
+    (0.0, 0.0, 1.0, 0.3)
+  )
 
-  if res.isSome:
-    shapes.circlefill(res.get.point, 3, (1.0, 0.0, 0.0, 1.0))
+  shapes.rect(
+    player.pos.x - player.width / 2,
+    player.pos.y - player.height / 2,
+    player.width,
+    player.height,
+    (0.0, 0.0, 1.0, 1.0)
+  )
+
+  # if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+  #   glfw.GetCursorPos(window, addr p2.x, addr p2.y)
+  
+  # if glfw.GetMouseButton(window, glfw.MOUSE_BUTTON_RIGHT) == glfw.PRESS:
+  #   glfw.GetCursorPos(window, addr p1.x, addr p1.y)
+
+  # let ray: Ray = (p1, (p2 - p1).unit)
+  # let res = ray.intersect(map, map.layers[2])
+
+  # shapes.line(p1, p2, (0.0, 0.0, 0.0, 1.0))
+  # rayTileMapDebug(shapes, ray, map)
+
+  # if res.isSome:
+  #   shapes.circlefill(res.get.point, 3, (1.0, 0.0, 0.0, 1.0))
 
   shapes.flush()
+  lastTime = time
 
 
 

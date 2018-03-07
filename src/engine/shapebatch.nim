@@ -170,26 +170,35 @@ proc trifill*(batch: var ShapeBatch, a: Vec2, b: Vec2, c: Vec2, col: Color) =
   batch.pushCoord(x2, y2)
   batch.pushColor(col)
 
+proc rect*(batch: var ShapeBatch, x, y, width, height: float, col: Color) =
+  batch.line(x, y, x + width, y, col)
+  batch.line(x + width, y, x + width, y + height, col)
+  batch.line(x + width, y + height, x, y + height, col)
+  batch.line(x, y + height, x, y, col)
+
 proc rect*(batch: var ShapeBatch, pos: Vec2, width: float, height: float, col: Color) =
   batch.line(pos.x, pos.y, pos.x + width, pos.y, col)
   batch.line(pos.x + width, pos.y, pos.x + width, pos.y + height, col)
   batch.line(pos.x + width, pos.y + height, pos.x, pos.y + height, col)
   batch.line(pos.x, pos.y + height, pos.x, pos.y, col)
 
-proc rectfill*(batch: var ShapeBatch, pos: Vec2, width: float, height: float, col: Color) =
+proc rectfill*(batch: var ShapeBatch, x, y, width, height: float, col: Color) =
   batch.trifill(
-    (pos.x, pos.y),
-    (pos.x + width, pos.y),
-    (pos.x + width, pos.y + height),
+    (x, y),
+    (x + width, y),
+    (x + width, y + height),
     col
   )
 
   batch.trifill(
-    (pos.x + width, pos.y + height),
-    (pos.x, pos.y + height),
-    (pos.x, pos.y),
+    (x + width, y + height),
+    (x, y + height),
+    (x, y),
     col
   )
+
+proc rectfill*(batch: var ShapeBatch, pos: Vec2, width: float, height: float, col: Color) =
+  batch.rectfill(pos.x, pos.y, width, height, col)
 
 proc circle*(batch: var ShapeBatch, pos: Vec2, rad: float, col: Color) =
   var lastX = pos.x + rad
