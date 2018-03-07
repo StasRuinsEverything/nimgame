@@ -31,6 +31,7 @@ type
     height: float
     grounded: bool
     groundDir: Vec2
+    jumpJuice: float
 
 const grav = 800.0
 
@@ -318,16 +319,27 @@ while glfw.WindowShouldClose(window) == 0:
     moveX += 1
   if glfw.GetKey(window, glfw.KEY_UP) == glfw.PRESS:
     moveY += 1
+  else:
+    player.jumpJuice = 0
+
+  player.jumpJuice -= 8500 * dt
 
   if player.grounded:
     let speed = 1300.0
     
+    if moveY > 0:
+      player.jumpJuice = 2200
+
     player.vel +=
       player.groundDir * (vec2(moveX * speed, 0.0).dot(player.groundDir) * dt) +
-      player.groundDir.norm * moveY * 300
+      player.groundDir.norm * moveY * 150
   else:
     let oldVelX = player.vel.x
     player.vel.x += moveX * 1000 * dt
+
+    if player.jumpJuice > 0:
+      player.vel.y -= player.jumpJuice * dt
+
     if abs(player.vel.x) > 200 and player.vel.x * moveX > 0:
       player.vel.x = oldVelX
 
