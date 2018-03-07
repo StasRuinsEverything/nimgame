@@ -29,6 +29,8 @@ type
     vel: Vec2
     width: float
     height: float
+    grounded: bool
+    groundDir: Vec2
 
 const grav = 800.0
 
@@ -107,8 +109,35 @@ proc castVert(map: TileMap, layer: TileLayer, srcX, srcY, destY: float): Option[
       break
     
     row += step
-    
 
+proc castHoriz(map: TileMap, layer: TileLayer, srcX, srcY, destY: float): Option[RayIntersection] =
+  let grid = SquareGrid(
+    bounds: rect(0, 0, float(map.cols) * map.tileWidth, float(map.rows) * map.tileHeight),
+    cellSize: map.tileWidth
+  )
+  
+  let col = grid.toCol(srcX)
+  var row = clamp(grid.toRow(srcY), 0, map.rows - 1)
+  var destRow = clamp(grid.toRow(destY), 0, map.rows - 1)
+  var step = if srcY < destY: 1 else: -1
+
+  while true:
+    let offs = vec2(float(col) * map.tileWidth, float(row) * map.tileHeight)
+    let ray = (
+      (srcX - offs.x, srcY - offs.y),
+      (0.0, float(step))
+    )
+    var r = ray.intersect(map.getTile(layer[row, col]))
+
+    if r.isSome:
+      let r = r.get
+      result = some((r.point + offs, r.norm, r.dist))
+      break
+    
+    if row == destRow:
+      break
+    
+    row += step
 
 
 
@@ -255,8 +284,8 @@ var p2 = (x: 470.0, y: 749.0) #vec2(270, 330)
 
 var player = Player(
   pos: vec2(100, 100),
-  width: 30,
-  height: 50
+  width: 15,
+  height: 25
 )
 
 var lastTime = glfw.GetTime()
@@ -278,6 +307,32 @@ while glfw.WindowShouldClose(window) == 0:
 
 
   #player.vel.x += 1500 * (time - lastTime)
+
+  let dt = time - lastTime
+  var moveX = 0.0
+  var moveY = 0.0
+
+  if glfw.GetKey(window, glfw.KEY_LEFT) == glfw.PRESS:
+    moveX -= 1
+  if glfw.GetKey(window, glfw.KEY_RIGHT) == glfw.PRESS:
+    moveX += 1
+  if glfw.GetKey(window, glfw.KEY_UP) == glfw.PRESS:
+    moveY += 1
+
+  if player.grounded:
+    let speed = 1300.0
+    
+    player.vel +=
+      player.groundDir * (vec2(moveX * speed, 0.0).dot(player.groundDir) * dt) +
+      player.groundDir.norm * moveY * 300
+  else:
+    let oldVelX = player.vel.x
+    player.vel.x += moveX * 1000 * dt
+    if abs(player.vel.x) > 200 and player.vel.x * moveX > 0:
+      player.vel.x = oldVelX
+
+
+
   player.move(time - lastTime)
 
   let srcY = player.pos.y + player.height / 2
@@ -304,14 +359,17 @@ while glfw.WindowShouldClose(window) == 0:
     let y2 = if res2.isSome: res2.get.point.y else: srcY
 
     if y1 < y2:
-      player.pos.y = min(y1, y2) - player.height / 2
+      player.pos.y = y1 - player.height / 2
       player.vel = player.vel.bounce(res1.get.norm.unit, 0, 0.9)
-      echo res1.get.norm.unit
+      player.groundDir = res1.get.norm.norm.unit
     else:
-      player.pos.y = min(y1, y2) - player.height / 2
+      player.pos.y = y2 - player.height / 2
       player.vel = player.vel.bounce(res2.get.norm.unit, 0, 0.9)
-      echo res2.get.norm.unit
-
+      player.groundDir = res2.get.norm.norm.unit
+    
+    player.grounded = true
+  else:
+    player.grounded = false
 
 
 
