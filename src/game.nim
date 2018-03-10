@@ -245,9 +245,6 @@ proc tileSetLoader(path: string): TileSet =
 
 
 
-
-
-
 if glfw.Init() == 0:
   raise newException(Exception, "Failed to Initialize GLFW")
 
