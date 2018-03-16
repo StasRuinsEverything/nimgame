@@ -1,13 +1,44 @@
+{.experimental.}
+
 import
   engine/application,
   engine/affine2,
   engine/mathutils,
   engine/vec2,
   engine/shapebatch,
-  engine/col4
+  engine/col4,
+  util/structural
+
+structural(DynCon, Dyn):
+  vel: Vec2
+  pos: Vec2
+
+structural(DynCollCon, DynColl):
+  vel: Vec2
+  pos: Vec2
+  bounds: Rect
+
+type
+  Box = ref object
+    vel: Vec2
+    pos: Vec2
+    bounds: Rect
+
+  Game = ref object
+    dyn: seq[Dyn[RootRef]]
+
+
+proc addAsDyn(game: Game, obj: Dyn[RootRef]) =
+  game.dyn.add(obj)
+
 
 var app = newApp(width = 800, height = 600, title = "Fugg")
 var shapes = newShapeBatch()
+var game = Game(
+  dyn: @[]
+)
+
+game.addAsDyn(Box())
 
 while not app.shouldClose:
   app.frame do (app: var auto, dt: float):
